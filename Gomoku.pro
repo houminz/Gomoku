@@ -20,7 +20,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += src/gomoku.h
+HEADERS += src/gomoku.h \
+    src/piece.h
 FORMS += ui/gomoku.ui
-SOURCES += src/gomoku.cpp src/main.cpp
+SOURCES += src/gomoku.cpp src/main.cpp \
+    src/piece.cpp
 RESOURCES += res/res.qrc
