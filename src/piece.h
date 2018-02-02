@@ -24,6 +24,7 @@ public:
     // Getter member functions
     int getRow() const { return m_row; }
     int getCol() const { return m_col; }
+    int getRound() const { return m_round; }
     PieceColor getColor() const { return m_color; }
     PieceState getState() const { return m_state; }
 
@@ -34,6 +35,7 @@ public:
 private:
     int m_row;
     int m_col;
+    int m_round;
     PieceColor m_color;
     PieceState m_state;
 };
