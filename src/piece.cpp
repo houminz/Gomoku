@@ -12,3 +12,8 @@ Piece::Piece(int row, int col, PieceColor color) :
 
 }
 
+Piece::~Piece()
+{
+
+}
+

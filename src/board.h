@@ -14,21 +14,22 @@ public:
     explicit Board(QWidget *parent = 0);
     ~Board();
 
-    void clearBoard();
 protected:
-    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-    bool isOnBoard(int x, int y);
-    bool isAvailable(int x, int y);
     bool checkWin(int row, int col, int color);
-    bool hasBomb(int x, int y);
 
-    Piece m_board[Const::SIZE][Const::SIZE];
+    Piece m_board[Const::SIZE + 1][Const::SIZE + 1];
+    QPointF m_center;
+    Piece::PieceColor m_color;
     bool m_is_hidden;
+    bool m_is_block;
     int m_round;
     double m_cell_width;
 
+    bool m_bomb[Const::SIZE + 1][Const::SIZE + 1];
 };
 
 #endif

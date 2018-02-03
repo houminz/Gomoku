@@ -17,6 +17,7 @@ public:
 
 private:
     Ui::Gomoku *ui;
+
 };
 
 #endif

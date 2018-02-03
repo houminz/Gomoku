@@ -4,10 +4,6 @@
 class Piece
 {
 public:
-    explicit Piece();
-    explicit Piece(int row, int col);
-    ~Piece();
-
     enum PieceColor
     {
         Transparent,
@@ -20,6 +16,10 @@ public:
         Hover,
         Placed
     };
+
+    explicit Piece();
+    explicit Piece(int row, int col, PieceColor color);
+    ~Piece();
 
     // Getter member functions
     int getRow() const { return m_row; }
