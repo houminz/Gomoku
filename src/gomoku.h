@@ -2,6 +2,7 @@
 #define GOMOKU_H
 
 #include <QMainWindow>
+#include <QTimer>
 
 namespace Ui {
 class Gomoku;
@@ -15,9 +16,14 @@ public:
     explicit Gomoku(QMainWindow *parent = 0);
     ~Gomoku();
 
+private slots:
+    void start();
+    void pause();
+    //void disconnect();
+
 private:
     Ui::Gomoku *ui;
-
+    QTimer  *timer;
 };
 
 #endif

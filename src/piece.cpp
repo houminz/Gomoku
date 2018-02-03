@@ -6,8 +6,8 @@ Piece::Piece() :
 
 }
 
-Piece::Piece(int row, int col, PieceColor color) :
-    m_row(row), m_col(col), m_color(color), m_state(Placed)
+Piece::Piece(int row, int col, PieceColor color, int round) :
+    m_row(row), m_col(col), m_round(round), m_color(color), m_state(Placed)
 {
 
 }

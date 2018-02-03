@@ -17,9 +17,12 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    bool checkWin(int row, int col, int color);
+    void placePiece(int row, int col, Piece::PieceColor color);
+    bool checkWin(int row, int col, Piece::PieceColor color);
 
     Piece m_board[Const::SIZE + 1][Const::SIZE + 1];
     QPointF m_center;

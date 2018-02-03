@@ -25,5 +25,6 @@ const int POINT[5][2] =
     {-4, -4}
 };
 
+inline double Sqr(double x) { return x * x; }
 }
 #endif // CONST_H

@@ -18,7 +18,7 @@ public:
     };
 
     explicit Piece();
-    explicit Piece(int row, int col, PieceColor color);
+    explicit Piece(int row, int col, PieceColor color, int round);
     ~Piece();
 
     // Getter member functions

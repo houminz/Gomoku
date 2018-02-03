@@ -1,13 +1,17 @@
 #include "board.h"
 
 #include <QPainter>
+#include <QMessageBox>
+#include <QMouseEvent>
 #include <QtDebug>
 
 Board::Board(QWidget *parent) :
     QWidget(parent),
-    m_round(0)
+    m_round(0),
+    m_color(Piece::White)
 {
     this->setMouseTracking(true);
+
 }
 
 Board::~Board()
@@ -17,8 +21,6 @@ Board::~Board()
 
 void Board::resizeEvent(QResizeEvent* event)
 {
-    qDebug() << "Board::resizeEvent";
-    qDebug() << "width: " << this->width() << " height: " << this->height();
     QWidget::resizeEvent(event);
 
     m_cell_width = 1.0 * std::min(this->width(), this->height()) / (Const::SIZE + 2) * 0.95;
@@ -93,8 +95,72 @@ void Board::paintEvent(QPaintEvent *event)
             }
         }
 }
+void Board::mouseMoveEvent(QMouseEvent* event)
+{
+    if (m_is_block)
+    {
+        for (int i = 0; i <= Const::SIZE; i++)
+            for (int j = 0; j <= Const::SIZE; j++)
+                if (m_board[i][j].getState() == Piece::Hover)
+                    m_board[i][j].setState(Piece::None);
+        this->update();
+        return;
+    }
+    for (int i = 0; i <= Const::SIZE; i++)
+        for (int j = 0; j <= Const::SIZE; j++)
+            if (m_board[i][j].getState() != Piece::Placed)
+            {
+                int halfSize = Const::SIZE / 2, r = m_cell_width / 2;
+                QPointF center = m_center + QPointF((i - halfSize) * m_cell_width, (j - halfSize) * m_cell_width);
+                if (Const::Sqr(center.x() - event->x()) + Const::Sqr(center.y() - event->y()) >= r * r)
+                    m_board[i][j].setState(Piece::None);
+                else
+                    m_board[i][j].setState(Piece::Hover);
+            }
+    this->update();
+    return;
+}
+void Board::mousePressEvent(QMouseEvent* event)
+{
+    if (m_is_block || event->button() != Qt::LeftButton) return;
+    for (int i = 0; i <= Const::SIZE; i++)
+        for (int j = 0; j <= Const::SIZE; j++)
+            if (m_board[i][j].getState() == Piece::Hover)
+            {
+                int halfSize = Const::SIZE / 2, r = m_cell_width / 2;
+                QPointF center = m_center + QPointF((i - halfSize) * m_cell_width, (j - halfSize) * m_cell_width);
+                if (Const::Sqr(center.x() - event->x()) + Const::Sqr(center.y() - event->y()) >= r * r) continue;
+                if (event->button() == Qt::LeftButton)
+                {
+                    //m_my_pieces++;
+                    //emit piecePlaced(i, j, m_color);
+                    placePiece(i, j, m_color);
+                    return;
+                }
+            }
+}
 
-bool Board::checkWin(int row, int col, int color)
+void Board::placePiece(int row, int col, Piece::PieceColor color)
+{
+    if (row < 0 || col < 0 || color == Piece::Transparent) return;
+    m_board[row][col] = Piece(row, col, color, ++m_round);
+    //m_stack.push(m_board[row][col]);
+    this->update();
+    if (checkWin(row, col, color))
+    {
+        //emit gameOver();
+        if (color == m_color)
+            QMessageBox::information(this, tr("WIN!"), tr("Congratulation! You win the game :-)"));
+        else
+            QMessageBox::information(this, tr("LOSE"), tr("You lose the game :-("));
+    }
+    else if (m_round == Const::SIZE * Const::SIZE)
+    {
+        //emit gameOver();
+        QMessageBox::information(this, tr("DRAW"), tr("2333333333..."));
+    }
+}
+bool Board::checkWin(int row, int col, Piece::PieceColor color)
 {
     for (int i = 0, j; i <= Const::SIZE; i = j + 1)
     {
