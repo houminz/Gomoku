@@ -20,6 +20,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event) override;
 
+signals:
+    void gameOver();
+
 private:
     void placePiece(int row, int col, Piece::PieceColor color);
     bool checkWin(int row, int col, Piece::PieceColor color);

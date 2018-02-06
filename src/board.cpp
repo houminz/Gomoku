@@ -7,8 +7,8 @@
 
 Board::Board(QWidget *parent) :
     QWidget(parent),
-    m_round(0),
-    m_color(Piece::White)
+    m_color(Piece::White),
+    m_round(0)
 {
     this->setMouseTracking(true);
 
@@ -148,7 +148,7 @@ void Board::placePiece(int row, int col, Piece::PieceColor color)
     this->update();
     if (checkWin(row, col, color))
     {
-        //emit gameOver();
+        emit gameOver();
         if (color == m_color)
             QMessageBox::information(this, tr("WIN!"), tr("Congratulation! You win the game :-)"));
         else
@@ -156,7 +156,7 @@ void Board::placePiece(int row, int col, Piece::PieceColor color)
     }
     else if (m_round == Const::SIZE * Const::SIZE)
     {
-        //emit gameOver();
+        emit gameOver();
         QMessageBox::information(this, tr("DRAW"), tr("2333333333..."));
     }
 }

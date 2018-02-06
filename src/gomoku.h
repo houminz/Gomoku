@@ -17,13 +17,27 @@ public:
     ~Gomoku();
 
 private slots:
+    void onChooseColor();
+    void onPause();
+    void onContinue();
+
     void start();
     void pause();
-    //void disconnect();
+    void drop();
+    void undo();
+    void hint();
+    void disconnect();
+    void about();
+    void exit();
+
+signals:
+    void disconnected();
 
 private:
     Ui::Gomoku *ui;
-    QTimer  *timer;
+    QTimer  *m_timer;
+    bool m_is_started;
+    bool m_is_blocked;
 };
 
 #endif

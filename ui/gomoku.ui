@@ -52,9 +52,9 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QPushButton" name="place">
+        <widget class="QPushButton" name="hint">
          <property name="text">
-          <string>Place</string>
+          <string>Hint</string>
          </property>
         </widget>
        </item>
@@ -62,6 +62,13 @@
         <widget class="QPushButton" name="drop">
          <property name="text">
           <string>Drop</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="undo">
+         <property name="text">
+          <string>Undo</string>
          </property>
         </widget>
        </item>
@@ -129,15 +136,34 @@
     <property name="title">
      <string>Game</string>
     </property>
+    <addaction name="actionStart"/>
+    <addaction name="separator"/>
+    <addaction name="exit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="about"/>
    </widget>
    <addaction name="menuGame"/>
    <addaction name="menuHelp"/>
   </widget>
+  <action name="about">
+   <property name="text">
+    <string>about</string>
+   </property>
+  </action>
+  <action name="actionStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="exit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
