@@ -1,6 +1,8 @@
 #ifndef GOMOKU_H
 #define GOMOKU_H
 
+#include "piece.h"
+
 #include <QMainWindow>
 #include <QTimer>
 
@@ -20,6 +22,7 @@ private slots:
     void onChooseColor();
     void onPause();
     void onContinue();
+    void onMyMove(int row, int col, Piece::PieceColor color);
 
     void start();
     void pause();

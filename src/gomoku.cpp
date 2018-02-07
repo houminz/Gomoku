@@ -1,6 +1,5 @@
 #include "gomoku.h"
 #include "ui_gomoku.h"
-#include "const.h"
 
 #include <QtDebug>
 #include <QMessageBox>
@@ -22,6 +21,8 @@ Gomoku::Gomoku(QMainWindow *parent) :
 
     connect(ui->about, &QAction::triggered, this, &Gomoku::about);
     connect(ui->exit, &QAction::triggered, this, &Gomoku::exit);
+
+    connect(ui->board, &Board::piecePlaced, this, &Gomoku::onMyMove);
 }
 
 Gomoku::~Gomoku()
@@ -43,6 +44,14 @@ void Gomoku::onPause()
 {
     if (m_timer->isActive())
         m_timer->stop();
+}
+
+void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
+{
+    if (color == Piece::White)
+        ui->board->setColor(Piece::Black);
+    else
+        ui->board->setColor(Piece::White);
 }
 
 void Gomoku::start()

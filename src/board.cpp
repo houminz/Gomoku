@@ -97,7 +97,7 @@ void Board::paintEvent(QPaintEvent *event)
 }
 void Board::mouseMoveEvent(QMouseEvent* event)
 {
-    if (m_is_block)
+    if (m_is_blocked)
     {
         for (int i = 0; i <= Const::SIZE; i++)
             for (int j = 0; j <= Const::SIZE; j++)
@@ -120,9 +120,10 @@ void Board::mouseMoveEvent(QMouseEvent* event)
     this->update();
     return;
 }
+
 void Board::mousePressEvent(QMouseEvent* event)
 {
-    if (m_is_block || event->button() != Qt::LeftButton) return;
+    if (m_is_blocked || event->button() != Qt::LeftButton) return;
     for (int i = 0; i <= Const::SIZE; i++)
         for (int j = 0; j <= Const::SIZE; j++)
             if (m_board[i][j].getState() == Piece::Hover)
@@ -133,11 +134,19 @@ void Board::mousePressEvent(QMouseEvent* event)
                 if (event->button() == Qt::LeftButton)
                 {
                     //m_my_pieces++;
-                    //emit piecePlaced(i, j, m_color);
                     placePiece(i, j, m_color);
+                    emit piecePlaced(i, j, m_color);
                     return;
                 }
             }
+}
+
+void Board::clear()
+{
+    m_round = 0;
+    for (int i = 0 ; i <= Const::SIZE; i++)
+        for (int j = 0 ; j <= Const::SIZE; j++) m_board[i][j] = Piece();
+    this->update();
 }
 
 void Board::placePiece(int row, int col, Piece::PieceColor color)
