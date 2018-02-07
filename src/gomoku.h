@@ -29,6 +29,9 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
+    void initialize();
+    void onGameStartPrepare();
+
     void onTimeOut();
     void onChooseColor();
     void onPause();

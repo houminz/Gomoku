@@ -38,6 +38,8 @@ Gomoku::Gomoku(QMainWindow *parent) :
     connect(ui->board, &Board::gameOver, this, &Gomoku::onGameOver);
 
     connect(&m_timer, &QTimer::timeout, this, &Gomoku::onTimeOut);
+
+    initialize();
 }
 
 Gomoku::~Gomoku()
@@ -49,6 +51,17 @@ void Gomoku::closeEvent(QCloseEvent *event)
 {
     qDebug() << "receive close event";
     emit disconnected();
+}
+
+void Gomoku::initialize()
+{
+    //setBlock(true);
+    ui->drop->setEnabled(false);
+    ui->start->setEnabled(false);
+    ui->pause->setEnabled(false);
+
+    ui->board->setHidden(false);
+
 }
 
 void Gomoku::setMode(int mode)
@@ -92,6 +105,18 @@ void Gomoku::onGameOver(Piece::PieceColor color)
         }
 
     ui->board->setBlock(true);
+}
+
+void Gomoku::onGameStartPrepare()
+{
+    m_timer.stop();
+    //if (m_is_choosing_color) return;
+    //this->setBlock(true);
+    m_is_started = false;
+    ui->start->setText(tr("&Start"));
+    ui->pause->setEnabled(false);
+    ui->undo->setEnabled(false);
+    ui->drop->setEnabled(false);
 }
 
 void Gomoku::onTimeOut()
@@ -147,6 +172,8 @@ void Gomoku::onPause()
 void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
 {
     ui->board->revertColor();
+    m_time_left = Const::TIME_LIMIT + 1;
+
 }
 
 void Gomoku::start()
