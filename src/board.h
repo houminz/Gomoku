@@ -16,6 +16,7 @@ public:
     ~Board();
 
     // getter member functions
+    Piece::PieceColor getColor() { return m_color; }
 
     // setter member functions
     void setColor(Piece::PieceColor color) { m_color = color; }

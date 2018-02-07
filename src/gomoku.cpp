@@ -99,7 +99,7 @@ void Gomoku::onTimeOut()
     m_time_left--;
     QString time = QString::number(m_time_left);
     if (m_time_left < 10) time = "0" + time;
-    if (m_color == Piece::Black)
+    if (ui->board->getColor() == Piece::Black)
     {
         ui->lcd_total0->display(QTime(0, 0, 0).addSecs(++m_black_time).toString("mm:ss"));
         ui->lcd_left0->display(time);
@@ -113,11 +113,11 @@ void Gomoku::onTimeOut()
     }
     else
     {
-        ui->lcd_total0->display(QTime(0, 0, 0).addSecs(++m_white_time).toString("mm:ss"));
+        ui->lcd_total0->display(QTime(0, 0, 0).addSecs(m_black_time).toString("mm:ss"));
         ui->lcd_left0->display(Const::TIME_LIMIT);
-        ui->lcd_total1->display(QTime(0, 0, 0).addSecs(m_black_time).toString("mm:ss"));
+        ui->lcd_left0->setStyleSheet("");
+        ui->lcd_total1->display(QTime(0, 0, 0).addSecs(++m_white_time).toString("mm:ss"));
         ui->lcd_left1->display(time);
-        ui->lcd_left1->setStyleSheet("");
         if (m_time_left <= 10)
             ui->lcd_left1->setStyleSheet("color:red;");
         else
