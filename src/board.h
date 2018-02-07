@@ -5,6 +5,7 @@
 #include "piece.h"
 
 #include <QWidget>
+#include <QStack>
 
 class Board : public QWidget
 {
@@ -23,6 +24,8 @@ public:
 
     void clear();
     void placePiece(int row, int col, Piece::PieceColor color);
+    void undo(int round);
+    void revertColor();
 
 
 protected:
@@ -33,7 +36,7 @@ protected:
 
 signals:
     void piecePlaced(int row, int col, Piece::PieceColor color);
-    void gameOver();
+    void gameOver(Piece::PieceColor color);
 
 private:
     bool checkWin(int row, int col, Piece::PieceColor color);
@@ -53,6 +56,9 @@ private:
     bool m_is_blocked;
     int m_round;
     double m_cell_width;
+
+    // for undo
+    QStack<Piece> m_stack;
 
     bool m_bomb[Const::SIZE + 1][Const::SIZE + 1];
 };

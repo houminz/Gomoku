@@ -8,7 +8,9 @@
 Board::Board(QWidget *parent) :
     QWidget(parent),
     m_color(Piece::White),
-    m_round(0)
+    m_round(0),
+    m_is_hidden(false),
+    m_is_blocked(false)
 {
     this->setMouseTracking(true);
 
@@ -68,8 +70,8 @@ void Board::paintEvent(QPaintEvent *event)
         for (int j = 0; j <= Const::SIZE; j++)
         {
             QPointF center((i - halfSize) * m_cell_width , (j - halfSize) * m_cell_width);
-            if (m_bomb[i][j])
-                painter.drawPixmap(center.x() - r, center.y() - r, r * 2, r * 2, QPixmap(":/icon/icon/bomb.png"));
+            //if (m_bomb[i][j])
+            //    painter.drawPixmap(center.x() - r, center.y() - r, r * 2, r * 2, QPixmap(":/icon/icon/bomb.png"));
             if (m_board[i][j].getState() != Piece::None)
             {
                 Piece piece = m_board[i][j];
@@ -133,7 +135,6 @@ void Board::mousePressEvent(QMouseEvent* event)
                 if (Const::Sqr(center.x() - event->x()) + Const::Sqr(center.y() - event->y()) >= r * r) continue;
                 if (event->button() == Qt::LeftButton)
                 {
-                    //m_my_pieces++;
                     placePiece(i, j, m_color);
                     emit piecePlaced(i, j, m_color);
                     return;
@@ -149,26 +150,43 @@ void Board::clear()
     this->update();
 }
 
+void Board::revertColor()
+{
+    if (m_color == Piece::White)
+        m_color = Piece::Black;
+    else
+        m_color = Piece::White;
+}
+
 void Board::placePiece(int row, int col, Piece::PieceColor color)
 {
     if (row < 0 || col < 0 || color == Piece::Transparent) return;
     m_board[row][col] = Piece(row, col, color, ++m_round);
-    //m_stack.push(m_board[row][col]);
+    m_stack.push(m_board[row][col]);
     this->update();
     if (checkWin(row, col, color))
     {
-        emit gameOver();
-        if (color == m_color)
-            QMessageBox::information(this, tr("WIN!"), tr("Congratulation! You win the game :-)"));
-        else
-            QMessageBox::information(this, tr("LOSE"), tr("You lose the game :-("));
+        emit gameOver(color);
     }
     else if (m_round == Const::SIZE * Const::SIZE)
     {
-        emit gameOver();
-        QMessageBox::information(this, tr("DRAW"), tr("2333333333..."));
+        emit gameOver(Piece::Transparent);
     }
 }
+
+void Board::undo(int round)
+{
+    for (int i = 0; i < round && m_stack.size(); i++)
+    {
+        Piece piece = m_stack.top();
+        m_board[piece.getRow()][piece.getCol()].setState(Piece::None);
+        m_board[piece.getRow()][piece.getCol()].setColor(Piece::Transparent);
+        m_stack.pop();
+        m_round--;
+    }
+    this->update();
+}
+
 bool Board::checkWin(int row, int col, Piece::PieceColor color)
 {
     for (int i = 0, j; i <= Const::SIZE; i = j + 1)
