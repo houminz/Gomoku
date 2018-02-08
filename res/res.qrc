@@ -8,5 +8,6 @@
         <file>images/lefta.png</file>
         <file>images/righta.png</file>
         <file>images/whitep.png</file>
+        <file>icons/bomb.png</file>
     </qresource>
 </RCC>

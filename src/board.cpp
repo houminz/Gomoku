@@ -3,7 +3,6 @@
 #include <QPainter>
 #include <QMessageBox>
 #include <QMouseEvent>
-#include <QtDebug>
 
 Board::Board(QWidget *parent) :
     QWidget(parent),
@@ -13,7 +12,14 @@ Board::Board(QWidget *parent) :
     m_is_blocked(false)
 {
     this->setMouseTracking(true);
-
+    for (int i = 0; i <= Const::SIZE; i++)
+        for (int j = 0; j <= Const::SIZE; j++) m_bomb[i][j] = 0;
+    connect(&m_bomb_timer, &QTimer::timeout, this, [this]()
+    {
+        for (int i = 0; i <= Const::SIZE; i++)
+            for (int j = 0; j <= Const::SIZE; j++) m_bomb[i][j] = 0;
+        this->update();
+    });
 }
 
 Board::~Board()
@@ -70,8 +76,8 @@ void Board::paintEvent(QPaintEvent *event)
         for (int j = 0; j <= Const::SIZE; j++)
         {
             QPointF center((i - halfSize) * m_cell_width , (j - halfSize) * m_cell_width);
-            //if (m_bomb[i][j])
-            //    painter.drawPixmap(center.x() - r, center.y() - r, r * 2, r * 2, QPixmap(":/icon/icon/bomb.png"));
+            if (m_bomb[i][j])
+                painter.drawPixmap(center.x() - r, center.y() - r, r * 2, r * 2, QPixmap(":/icons/bomb.png"));
             if (m_board[i][j].getState() != Piece::None)
             {
                 Piece piece = m_board[i][j];
@@ -212,3 +218,46 @@ bool Board::checkWin(int row, int col, Piece::PieceColor color)
     return false;
 }
 
+bool Board::hasBomb(int x, int y)
+{
+    static const int dir[4][2] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
+                                //  --      |       \        /
+    if (m_board[x][y].getColor() != Piece::Transparent) return false;
+    Piece::PieceColor oppColor = m_color == Piece::Black ? Piece::White : Piece::Black;
+    m_board[x][y].setColor(oppColor);
+
+    int n3 = 0, n4 = 0, n4_ = 0, n5 = 0;
+    for (int i = 0; i < Const::SIZE; i++)
+        for (int j = 0; j < Const::SIZE; j++)
+            if (m_board[i][j].getColor() == oppColor)
+            {
+                for (int d = 0; d < 4; d++)
+                {
+                    int ii = i, jj = j, k;
+                    for (k = 0; k < 5 && isOnBoard(ii, jj) && m_board[ii][jj].getColor() == oppColor; k++, ii += dir[d][0], jj += dir[d][1]);
+                    if (k == 3 && isAvailable(ii,jj) && isAvailable(i - dir[d][0], j - dir[d][1])) n3++;
+                    if (k == 4 && isAvailable(ii, jj) && isAvailable(i - dir[d][0], j - dir[d][1])) n4_++;
+                    if (k == 4 && (isAvailable(ii, jj) || isAvailable(i - dir[d][0], j - dir[d][1]))) n4++;
+                    if (k == 5) n5++;
+
+                    if (n3 >= 2 || (n3 && n4) || n4_ || n5)
+                    {
+                        m_board[x][y].setColor(Piece::Transparent);
+                        return true;
+                    }
+                }
+            }
+    m_board[x][y].setColor(Piece::Transparent);
+    return false;
+}
+
+void Board::showHint()
+{
+    m_bomb_timer.setSingleShot(true);
+    m_bomb_timer.start(2000);
+    for (int i = 0; i <= Const::SIZE; i++)
+        for (int j = 0; j <= Const::SIZE; j++)
+            m_bomb[i][j] = hasBomb(i, j);
+    this->update();
+
+}

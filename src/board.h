@@ -6,6 +6,7 @@
 
 #include <QWidget>
 #include <QStack>
+#include <QTimer>
 
 class Board : public QWidget
 {
@@ -27,6 +28,7 @@ public:
     void placePiece(int row, int col, Piece::PieceColor color);
     void undo(int round);
     void revertColor();
+    void showHint();
 
 
 protected:
@@ -49,6 +51,8 @@ private:
     {
         return isOnBoard(x, y) && m_board[x][y].getColor() == Piece::Transparent;
     }
+    bool hasBomb(int x, int y);
+
 
     Piece m_board[Const::SIZE + 1][Const::SIZE + 1];
     QPointF m_center;
@@ -61,6 +65,8 @@ private:
     // for undo
     QStack<Piece> m_stack;
 
+    // for hint
+    QTimer m_bomb_timer;
     bool m_bomb[Const::SIZE + 1][Const::SIZE + 1];
 };
 

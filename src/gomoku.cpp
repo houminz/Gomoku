@@ -12,7 +12,9 @@ Gomoku::Gomoku(QMainWindow *parent) :
     m_is_blocked(false),
     m_color(Piece::Black),
     m_black_time(0),
-    m_white_time(0)
+    m_white_time(0),
+    m_my_tot_time(0),
+    m_opp_tot_time(0)
 {
     ui->setupUi(this);
 
@@ -47,20 +49,35 @@ Gomoku::~Gomoku()
     delete ui;
 }
 
-void Gomoku::closeEvent(QCloseEvent *event)
+void Gomoku::closeEvent(QCloseEvent* event)
 {
     qDebug() << "receive close event";
     emit disconnected();
+    qApp->exit(0);
 }
 
 void Gomoku::initialize()
 {
     //setBlock(true);
+    ui->board->setHidden(false);
+
     ui->drop->setEnabled(false);
     ui->start->setEnabled(false);
     ui->pause->setEnabled(false);
-
-    ui->board->setHidden(false);
+//    if (m_type == Const::Server)
+//    {
+//        ui->ip0->setText(QString("%1:%2").arg(Const::GetLocalIp()).arg(m_port));
+//        ui->ip1->setText("");
+//        ui->player0->setTitle(m_username);
+//        ui->player1->setTitle(tr("Player1"));
+//    }
+//    else if (m_type == Const::Client)
+//    {
+//        ui->ip0->setText("");
+//        ui->ip1->setText("");
+//        ui->player0->setTitle(tr("Player0"));
+//        ui->player1->setTitle(m_username);
+//    }
 
 }
 
@@ -224,6 +241,7 @@ void Gomoku::undo()
 void Gomoku::hint()
 {
     qDebug() << "Show Hint";
+    ui->board->showHint();
 }
 
 void Gomoku::drop()
