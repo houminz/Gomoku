@@ -2,6 +2,8 @@
 #define GOMOKU_H
 
 #include "piece.h"
+#include "server.h"
+#include "connectionthread.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -56,14 +58,25 @@ private:
     Ui::Gomoku *ui;
     Mode m_mode;
     Piece::PieceColor m_color;
+    bool m_is_started;
+    bool m_is_blocked;
+
+    // time about
     QTimer  m_timer;
     int m_time_left;
     int m_opp_tot_time;
     int m_my_tot_time;
     int m_black_time;
     int m_white_time;
-    bool m_is_started;
-    bool m_is_blocked;
+
+    // network about
+    QString m_ip;
+    int m_port;
+
+    Server* m_server;
+    Connection* m_connection;
+    ConnectionThread* m_thread;
+
 
 };
 

@@ -1,6 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/gomoku.ico</file>
+        <file>icons/bomb.png</file>
+    </qresource>
+
+    <qresource prefix="/">
         <file>images/blackp.png</file>
         <file>images/bomb.png</file>
         <file>images/city.jpg</file>
@@ -8,6 +12,5 @@
         <file>images/lefta.png</file>
         <file>images/righta.png</file>
         <file>images/whitep.png</file>
-        <file>icons/bomb.png</file>
     </qresource>
 </RCC>

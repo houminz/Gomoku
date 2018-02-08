@@ -23,9 +23,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += src/gomoku.h \
     src/piece.h \
     src/board.h \
-    src/const.h
+    src/const.h \
+    src/server.h \
+    src/connection.h \
+    src/connectionthread.h
 FORMS += ui/gomoku.ui
 SOURCES += src/gomoku.cpp src/main.cpp \
     src/piece.cpp \
-    src/board.cpp
+    src/board.cpp \
+    src/server.cpp \
+    src/connection.cpp \
+    src/connectionthread.cpp
 RESOURCES += res/res.qrc

@@ -11,10 +11,11 @@ Gomoku::Gomoku(QMainWindow *parent) :
     m_mode(Gomoku::Single),
     m_is_blocked(false),
     m_color(Piece::Black),
-    m_black_time(0),
-    m_white_time(0),
     m_my_tot_time(0),
-    m_opp_tot_time(0)
+    m_opp_tot_time(0),
+    m_black_time(0),
+    m_white_time(0)
+
 {
     ui->setupUi(this);
 
