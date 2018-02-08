@@ -1,6 +1,7 @@
 #ifndef GOMOKU_H
 #define GOMOKU_H
 
+#include "const.h"
 #include "piece.h"
 #include "server.h"
 #include "connectionthread.h"
@@ -31,8 +32,8 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    void initialize();
     void onGameStartPrepare();
+    void onConnectionReady();
 
     void onTimeOut();
     void onChooseColor();
@@ -70,14 +71,20 @@ private:
     int m_white_time;
 
     // network about
+    QString m_username;
+    QString m_opp_username;
+    Const::HostType m_type;
     QString m_ip;
     int m_port;
+    bool m_is_connected;
 
     Server* m_server;
     Connection* m_connection;
     ConnectionThread* m_thread;
 
-
+    void initialize();
+    void createServerConnection(ConnectionThread *thread);
+    void createClientConnection();
 };
 
 #endif

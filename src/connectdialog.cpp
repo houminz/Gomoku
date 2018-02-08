@@ -84,7 +84,6 @@ void ConnectDialog::onServer()
 
     ui->port->setFocus();
     ui->port->selectAll();
-
 }
 
 void ConnectDialog::onClient()

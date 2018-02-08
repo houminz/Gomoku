@@ -16,6 +16,11 @@ public:
     explicit ConnectDialog(QWidget *parent = nullptr);
     ~ConnectDialog();
 
+    Const::HostType getType() const { return m_type; }
+    QString getIP() const { return m_ip; }
+    int getPort() const { return m_port; }
+    QString getUsername() const { return m_username; }
+
 private slots:
     void onCreate();
     void onServer();

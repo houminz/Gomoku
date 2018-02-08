@@ -16,8 +16,14 @@ Gomoku::Gomoku(QMainWindow *parent) :
     m_my_tot_time(0),
     m_opp_tot_time(0),
     m_black_time(0),
-    m_white_time(0)
-
+    m_white_time(0),
+    m_username("Black"),
+    m_opp_username("White"),
+    m_type(Const::Server),
+    m_is_connected(false),
+    m_server(nullptr),
+    m_connection(nullptr),
+    m_thread(nullptr)
 {
     ui->setupUi(this);
 
@@ -100,6 +106,21 @@ void Gomoku::setMode(int mode)
                 if (dialog->exec() != QDialog::Accepted)
                 {
                     dialog->deleteLater();
+                    break;
+                }
+                m_ip = dialog->getIP();
+                m_port = dialog->getPort();
+                m_type = dialog->getType();
+                m_username = dialog->getUsername();
+                if (m_type == Const::Server)
+                {
+                    this->setWindowTitle(tr("Gomoku - Server"));
+                    m_server = new Server(m_ip, m_port, this);
+                    connect(m_server, &Server::newConnection, this, &Gomoku::createServerConnection);
+                }
+                else if (m_type == Const::Client)
+                {
+                    this->setWindowTitle(tr("Gomoku - Client"));
                 }
                 break;
             case 2:
@@ -112,6 +133,39 @@ void Gomoku::setMode(int mode)
     }
 }
 
+void Gomoku::createServerConnection(ConnectionThread* thread)
+{
+    m_is_connected = true;
+    m_thread = thread;
+    connect(m_thread, &ConnectionThread::connectionReady, this, &Gomoku::onConnectionReady);
+    m_thread->start();
+}
+
+void Gomoku::createClientConnection()
+{
+    m_thread = new ConnectionThread(m_type, m_ip, m_port, this);
+    connect(m_thread, &ConnectionThread::connectionReady, this, &Gomoku::onConnectionReady);
+    m_thread->start();
+}
+
+void Gomoku::onConnectionReady()
+{
+    m_connection = m_thread->getConnection();
+
+    ui->status->setText(tr("Connected"));
+    ui->label->setStyleSheet("color:green");
+    ui->disconnect->setEnabled(true);
+
+    if (m_type == Const::Server)
+    {
+
+    }
+    else if (m_type == Const::Client)
+    {
+
+    }
+    onGameStartPrepare();
+}
 void Gomoku::onGameOver(Piece::PieceColor color)
 {
     if (color == Piece::Transparent)
