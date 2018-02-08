@@ -26,12 +26,15 @@ HEADERS += src/gomoku.h \
     src/const.h \
     src/server.h \
     src/connection.h \
-    src/connectionthread.h
-FORMS += ui/gomoku.ui
+    src/connectionthread.h \
+    src/connectdialog.h
+FORMS += ui/gomoku.ui \
+    ui/connectdialog.ui
 SOURCES += src/gomoku.cpp src/main.cpp \
     src/piece.cpp \
     src/board.cpp \
     src/server.cpp \
     src/connection.cpp \
-    src/connectionthread.cpp
+    src/connectionthread.cpp \
+    src/connectdialog.cpp
 RESOURCES += res/res.qrc

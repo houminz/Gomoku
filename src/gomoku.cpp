@@ -1,5 +1,6 @@
 #include "gomoku.h"
 #include "ui_gomoku.h"
+#include "connectdialog.h"
 
 #include <QtDebug>
 #include <QTime>
@@ -9,8 +10,9 @@ Gomoku::Gomoku(QMainWindow *parent) :
     QMainWindow(parent),
     ui(new Ui::Gomoku),
     m_mode(Gomoku::Single),
-    m_is_blocked(false),
     m_color(Piece::Black),
+    m_is_started(false),
+    m_is_blocked(false),
     m_my_tot_time(0),
     m_opp_tot_time(0),
     m_black_time(0),
@@ -86,13 +88,25 @@ void Gomoku::setMode(int mode)
 {
     if (QMessageBox::question(this, tr("Ret Mode"), tr("Do you really want to change the game mode?")) == QMessageBox::Yes)
     {
-        qDebug() << "set Mode" << mode;
+        ConnectDialog *dialog;
         switch(mode)
         {
-            case 0: m_mode = Gomoku::Single;    break;
-            case 1: m_mode = Gomoku::Network;   break;
-            case 2: m_mode = Gomoku::AI;        break;
-            default: break;
+            case 0:
+                m_mode = Gomoku::Single;
+                break;
+            case 1:
+                m_mode = Gomoku::Network;
+                dialog = new ConnectDialog();
+                if (dialog->exec() != QDialog::Accepted)
+                {
+                    dialog->deleteLater();
+                }
+                break;
+            case 2:
+                m_mode = Gomoku::AI;
+                break;
+            default:
+                break;
         }
         ui->board->clear();
     }

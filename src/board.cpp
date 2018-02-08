@@ -7,9 +7,9 @@
 Board::Board(QWidget *parent) :
     QWidget(parent),
     m_color(Piece::White),
-    m_round(0),
     m_is_hidden(false),
-    m_is_blocked(false)
+    m_is_blocked(false),
+    m_round(0)
 {
     this->setMouseTracking(true);
     for (int i = 0; i <= Const::SIZE; i++)
