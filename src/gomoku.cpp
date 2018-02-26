@@ -1,6 +1,7 @@
 #include "gomoku.h"
 #include "ui_gomoku.h"
 #include "connectdialog.h"
+#include "choosecolordialog.h"
 
 #include <QtDebug>
 #include <QTime>
@@ -13,6 +14,7 @@ Gomoku::Gomoku(QMainWindow *parent) :
     m_color(Piece::Black),
     m_is_started(false),
     m_is_blocked(false),
+    m_can_undo(false),
     m_my_tot_time(0),
     m_opp_tot_time(0),
     m_black_time(0),
@@ -65,29 +67,22 @@ void Gomoku::closeEvent(QCloseEvent* event)
     qApp->exit(0);
 }
 
+void Gomoku::setBlock(bool isBlock)
+{
+    m_is_blocked = isBlock;
+    ui->board->setBlock(isBlock);
+    ui->hint->setEnabled(!isBlock);
+}
+
 void Gomoku::initialize()
 {
-    //setBlock(true);
+    ui->label_info->setText(tr("Default Single mode, you can also choose network or AI mode"));
+    setBlock(true);
     ui->board->setHidden(false);
 
     ui->drop->setEnabled(false);
     ui->start->setEnabled(false);
     ui->pause->setEnabled(false);
-//    if (m_type == Const::Server)
-//    {
-//        ui->ip0->setText(QString("%1:%2").arg(Const::GetLocalIp()).arg(m_port));
-//        ui->ip1->setText("");
-//        ui->player0->setTitle(m_username);
-//        ui->player1->setTitle(tr("Player1"));
-//    }
-//    else if (m_type == Const::Client)
-//    {
-//        ui->ip0->setText("");
-//        ui->ip1->setText("");
-//        ui->player0->setTitle(tr("Player0"));
-//        ui->player1->setTitle(m_username);
-//    }
-
 }
 
 void Gomoku::setMode(int mode)
@@ -115,12 +110,14 @@ void Gomoku::setMode(int mode)
                 if (m_type == Const::Server)
                 {
                     this->setWindowTitle(tr("Gomoku - Server"));
+                    ui->label_info->setText(tr("Network Mode: Waiting for connection..."));
                     m_server = new Server(m_ip, m_port, this);
                     connect(m_server, &Server::newConnection, this, &Gomoku::createServerConnection);
                 }
                 else if (m_type == Const::Client)
                 {
                     this->setWindowTitle(tr("Gomoku - Client"));
+                    createClientConnection();
                 }
                 break;
             case 2:
@@ -135,6 +132,8 @@ void Gomoku::setMode(int mode)
 
 void Gomoku::createServerConnection(ConnectionThread* thread)
 {
+    qDebug() << "receive connection";
+    if (m_is_connected) return;
     m_is_connected = true;
     m_thread = thread;
     connect(m_thread, &ConnectionThread::connectionReady, this, &Gomoku::onConnectionReady);
@@ -143,29 +142,48 @@ void Gomoku::createServerConnection(ConnectionThread* thread)
 
 void Gomoku::createClientConnection()
 {
+    qDebug() << "create client connection";
     m_thread = new ConnectionThread(m_type, m_ip, m_port, this);
+    m_thread->setGreetingMessage(m_username);
     connect(m_thread, &ConnectionThread::connectionReady, this, &Gomoku::onConnectionReady);
     m_thread->start();
 }
 
-void Gomoku::onConnectionReady()
+void Gomoku::onConnectionReady(const QString& oppUsername)
 {
     m_connection = m_thread->getConnection();
 
+    connect(this, &Gomoku::moveSent, m_connection, &Connection::sendMove);
+    connect(this, &Gomoku::messageSent, m_connection, &Connection::sendMessage);
+    connect(this, &Gomoku::disconnected, m_connection, &Connection::close);
+
+    connect(m_connection, &Connection::gameStartedReceived, this, &Gomoku::onChooseColor);
+    connect(m_connection, &Connection::pauseReceived, this, &Gomoku::onPause);
+    connect(m_connection, &Connection::continueReceived, this, &Gomoku::onContinue);
+
+    connect(m_connection, &Connection::moveReceived, this, &Gomoku::onOpponentMove);
+    connect(m_connection, &Connection::opponentUndoRequest, this, &Gomoku::onOpponentUndoRequeset);
+    connect(m_connection, &Connection::opponentDropReceived, this, &Gomoku::onOpponentDrop);
+    connect(m_connection, &Connection::disconnected, this, &Gomoku::onDisConnected);
+
     ui->status->setText(tr("Connected"));
-    ui->label->setStyleSheet("color:green");
+    ui->status->setStyleSheet("color:green");
     ui->disconnect->setEnabled(true);
 
     if (m_type == Const::Server)
     {
-
+        ui->player1->setTitle(oppUsername);
+        ui->ip1->setText(QString("%1:%2").arg(m_connection->peerAddress().toString()).arg(m_connection->peerPort()));
     }
     else if (m_type == Const::Client)
     {
-
+        ui->player0->setTitle(oppUsername);
+        ui->ip0->setText(QString("%1:%2").arg(m_ip).arg(m_port));
+        ui->ip1->setText(QString("%1:%2").arg(Const::getLocalIP()).arg(m_connection->localPort()));
     }
     onGameStartPrepare();
 }
+
 void Gomoku::onGameOver(Piece::PieceColor color)
 {
     if (color == Piece::Transparent)
@@ -193,16 +211,46 @@ void Gomoku::onGameOver(Piece::PieceColor color)
     ui->board->setBlock(true);
 }
 
+
+void Gomoku::onDisConnected()
+{
+    m_is_connected = false;
+    m_timer.stop();
+    ui->status->setText(tr("Disconnected"));
+    ui->status->setStyleSheet("color:red;");
+    ui->disconnect->setEnabled(false);
+
+    m_thread->deleteLater();
+
+    QString info = tr("Connection has been disconnected!");
+    if (m_type == Const::Client)
+        info += tr("\nThe game will restart.");
+    QMessageBox::information(this, tr("Disconnected"), info);
+    if (m_type == Const::Server)
+        initialize();
+    else if (m_type == Const::Client)
+        qApp->exit(233);
+
+}
+
 void Gomoku::onGameStartPrepare()
 {
     m_timer.stop();
     //if (m_is_choosing_color) return;
-    //this->setBlock(true);
+    this->setBlock(true);
     m_is_started = false;
     ui->start->setText(tr("&Start"));
     ui->pause->setEnabled(false);
     ui->undo->setEnabled(false);
     ui->drop->setEnabled(false);
+
+    if (m_type == Const::Server)
+    {
+        ui->start->setEnabled(true);
+        ui->label_info->setText(tr("Press the start button to start a new game."));
+    }
+    else if (m_type == Const::Client)
+        ui->label_info->setText(tr("Waiting for the server to start..."));
 }
 
 void Gomoku::onTimeOut()
@@ -235,24 +283,79 @@ void Gomoku::onTimeOut()
             ui->lcd_left1->setStyleSheet("");
     }
 
+    if (!m_time_left)
+    {
+        m_can_undo = false;
+    }
 }
 
 void Gomoku::onChooseColor()
 {
     ui->board->clear();
+    ui->label_info->setText(tr("Waiting for choosing color..."));
 
+    ChooseColorDialog dialog(m_username, m_type, this);
+    connect(m_connection, &Connection::prepareStateReceived, &dialog, &ChooseColorDialog::onUpdateState);
+    connect(m_connection, &QTcpSocket::disconnected, &dialog, &ChooseColorDialog::onDisconnected);
+    connect(&dialog, &ChooseColorDialog::prepareStateChanged, m_connection, &Connection::sendMessage);
 
-}
+    if (dialog.exec() != QDialog::Accepted)
+    {
+        if (dialog.isDisconnected())
+            return;
+        else
+            this->close();
+    }
 
-void Gomoku::onContinue()
-{
+    onTimeOut();
+    m_timer.start(1000);
 
+    ui->start->SetText(tr("&Continue"));
+    ui->start->SetEnabled(false);
+    ui->pause->SetEnabled(true);
+    ui->drop->SetEnabled(true);
+    m_is_started = true;
 }
 
 void Gomoku::onPause()
 {
-    if (m_timer.isActive())
-        m_timer.stop();
+    m_timer.stop();
+    ui->label_info->setText(tr("Pausing..."));
+    ui->pause->setEnabled(false);
+
+    ui->hint->setEnabled(false);
+    ui->undo->setEnabled(false);
+    ui->drop->setEnabled(false);
+
+    ui->board->setBlock(true);
+    ui->board->setHidden(true);
+}
+
+void Gomoku::onContinue()
+{
+    m_timer.start(1000);
+    if (!m_is_blocked)
+        ui->label_info->setText(tr("Please select a position to place the pieces."));
+    else
+        ui->label_info->setText(tr("Waiting for the opponent to place..."));
+    ui->pause->setEnabled(true);
+
+    ui->hint->setEnabled(!m_is_blocked);
+    ui->undo->setEnabled(m_can_undo);
+    ui->drop->setEnabled(true);
+
+    ui->board->setBlock(m_is_blocked);
+    ui->board->setHidden(false);
+}
+
+void Gomoku::onOpponentMove(int row, int col, Piece::PieceColor color)
+{
+    setBlock(false);
+
+    ui->label_info->setText(tr("Please select a position to place the pieces."));
+    if (row < 0) m_can_undo = false;
+    ui->undo->setEnabled(m_can_undo);
+    ui->board->placePiece(row, col, (Piece::PieceColor)color);
 }
 
 void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
@@ -262,24 +365,52 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
 
 }
 
+void Gomoku::onOpponentUndoRequest()
+{
+    int undoStep = m_is_blocked ? 2 : 1;
+    m_timer.stop();
+    ui->board->setHidden(true);
+    if (QMessageBox::question(this, tr("Undo Request"), QString(tr("Do you allow the opponent to move back before %1 step%2")).arg(undoStep).arg(undoStep == 1 ? "" : "s")) == QMessageBox::Yes)
+    {
+        emit messageSent("allowundo");
+        ui->board->undo(undoStep);
+        //ui->undo->setEnabled();
+        if (undoStep == 1)
+            nextMove();
+    }
+    else
+        emit messageSent("disallowundo");
+    ui->board->setHidden(false);
+}
+
+void Gomoku::onOpponentDrop()
+{
+    m_timer.stop();
+    QMessageBox::information(this, tr("WIN"), tr("The opponent drop the game :)"));
+    onGameStartPrepare();
+}
+
 void Gomoku::start()
 {
     qDebug() << "start now";
-    m_time_left = Const::TIME_LIMIT + 1;
-    m_timer.start(1000);
+//    m_time_left = Const::TIME_LIMIT + 1;
+//    m_timer.start(1000);
     if (m_is_started)
     {
+        emit messageSent("continue");
         ui->start->setEnabled(false);
         onContinue();
     }
-    else
+    else if (m_type == Const::Server)
     {
+        emit messageSent("start");
         onChooseColor();
     }
 }
 
 void Gomoku::pause()
 {
+    emit messageSent("pause");
     ui->start->setEnabled(true);
     onPause();
 }
@@ -317,7 +448,10 @@ void Gomoku::drop()
 {
     if (QMessageBox::question(this, tr("Drop Game"), tr("Do you really want to drop the game?")) == QMessageBox::Yes)
     {
+        m_timer.stop();
+        emit messageSent("drop");
         QMessageBox::information(this, tr("LOSE"), tr("You drop the game :("));
+        onGameStartPrepare();
     }
 }
 

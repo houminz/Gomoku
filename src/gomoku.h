@@ -33,13 +33,19 @@ protected:
 
 private slots:
     void onGameStartPrepare();
-    void onConnectionReady();
+    void onConnectionReady(const QString& oppUsername);
 
+    void onDisConnected();
     void onTimeOut();
     void onChooseColor();
     void onPause();
     void onContinue();
+
     void onMyMove(int row, int col, Piece::PieceColor color);
+    void onOpponentMove(int row, int col, Piece::PieceColor color);
+    void onOpponentUndoRequest();
+    void onOpponentDrop();
+
     void setMode(int mode);
     void onGameOver(Piece::PieceColor color);
 
@@ -54,6 +60,9 @@ private slots:
 
 signals:
     void disconnected();
+    void gameStarted();
+    void messageSent(const QString& message);
+    void moveSent(int row, int col, Piece::PieceColor color);
 
 private:
     Ui::Gomoku *ui;
@@ -61,6 +70,7 @@ private:
     Piece::PieceColor m_color;
     bool m_is_started;
     bool m_is_blocked;
+    bool m_can_undo;
 
     // time about
     QTimer  m_timer;
@@ -82,6 +92,7 @@ private:
     Connection* m_connection;
     ConnectionThread* m_thread;
 
+    void setBlock(bool isBlock);
     void initialize();
     void createServerConnection(ConnectionThread *thread);
     void createClientConnection();

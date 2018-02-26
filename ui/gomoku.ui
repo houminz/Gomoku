@@ -25,100 +25,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="0">
-     <widget class="QGroupBox" name="game">
-      <property name="minimumSize">
-       <size>
-        <width>250</width>
-        <height>130</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>130</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>&amp;Game</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QPushButton" name="start">
-         <property name="text">
-          <string>&amp;Start</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pause">
-         <property name="text">
-          <string>&amp;Pause</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="5" column="0">
-     <widget class="QGroupBox" name="connect">
-      <property name="minimumSize">
-       <size>
-        <width>250</width>
-        <height>120</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>130</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>&amp;Connection</string>
-      </property>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>12</x>
-         <y>35</y>
-         <width>46</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Status:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="status">
-       <property name="geometry">
-        <rect>
-         <x>103</x>
-         <y>35</y>
-         <width>16</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="disconnect">
-       <property name="geometry">
-        <rect>
-         <x>12</x>
-         <y>142</y>
-         <width>83</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&amp;Disconnect</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item row="4" column="0">
      <widget class="QGroupBox" name="move">
       <property name="minimumSize">
        <size>
@@ -163,7 +70,130 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="1" rowspan="6">
+    <item row="6" column="0">
+     <widget class="QGroupBox" name="connect">
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>120</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>130</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>&amp;Connection</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Status:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="status">
+         <property name="text">
+          <string>Disconnected</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QPushButton" name="disconnect">
+         <property name="text">
+          <string>&amp;Disconnect</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="player0">
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>130</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>130</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Player0</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_ip0">
+         <property name="text">
+          <string>IP Addr:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="total_time0">
+         <property name="text">
+          <string>Total Time:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLCDNumber" name="lcd_total0">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="segmentStyle">
+          <enum>QLCDNumber::Flat</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="left_time0">
+         <property name="text">
+          <string>Left Time:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLCDNumber" name="lcd_left0">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="segmentStyle">
+          <enum>QLCDNumber::Flat</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="ip0">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1" rowspan="7">
      <widget class="Board" name="board" native="true">
       <property name="minimumSize">
        <size>
@@ -171,6 +201,57 @@
         <height>450</height>
        </size>
       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_info">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Waiting for connections ...</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QGroupBox" name="game">
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>130</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>130</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>&amp;Game</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QPushButton" name="start">
+         <property name="text">
+          <string>&amp;Start</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pause">
+         <property name="text">
+          <string>&amp;Pause</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item row="0" column="0">
@@ -209,81 +290,7 @@
       </item>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QGroupBox" name="player0">
-      <property name="minimumSize">
-       <size>
-        <width>250</width>
-        <height>130</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>130</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Player0</string>
-      </property>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="ip0">
-         <property name="text">
-          <string>IP Address:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="total_time0">
-         <property name="text">
-          <string>Total Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLCDNumber" name="lcd_total0">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="segmentStyle">
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="left_time0">
-         <property name="text">
-          <string>Left Time:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLCDNumber" name="lcd_left0">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="segmentStyle">
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="QGroupBox" name="player1">
       <property name="minimumSize">
        <size>
@@ -302,9 +309,16 @@
       </property>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
+        <widget class="QLabel" name="label_ip1">
+         <property name="text">
+          <string>IP Addr:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
         <widget class="QLabel" name="ip1">
          <property name="text">
-          <string>IP Address:</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -365,7 +379,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
