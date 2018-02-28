@@ -28,8 +28,8 @@ private:
     bool m_allowed;
 
 signals:
-    void UndoAllowed();
-    void UndoDisallowed();
+    void undoAllowed();
+    void undoDisallowed();
 };
 
 #endif // WAITDIALOG_H

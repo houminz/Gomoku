@@ -25,23 +25,23 @@ void WaitDialog::closeEvent(QCloseEvent* event)
 
 
 
-void WaitDialog::onBackAllowed()
+void WaitDialog::onUndoAllowed()
 {
     m_allowed = true;
     ui->label->setText(tr("Undo request was allowed."));
     ui->buttonBox->setEnabled(true);
     this->setWindowTitle(tr("Allowed"));
     this->activateWindow();
-    emit UndoAllowed();
+    emit undoAllowed();
 }
 
-void WaitDialog::onBackDisallowed()
+void WaitDialog::onUndoDisallowed()
 {
     m_allowed = false;
     ui->label->setText(tr("Undo request was not allowed."));
     ui->buttonBox->setEnabled(true);
     this->setWindowTitle(tr("Not Allowed"));
     this->activateWindow();
-    emit UndoDisallowed();
+    emit undoDisallowed();
 }
 

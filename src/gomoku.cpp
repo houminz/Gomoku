@@ -454,6 +454,7 @@ void Gomoku::pause()
 void Gomoku::undo()
 {
     int undoStep = 1;
+    WaitDialog *dialog;
     if (QMessageBox::question(this, tr("Undo Step"), tr("Do you want to undo?")) == QMessageBox::Yes)
     {
         switch (m_mode)
@@ -470,6 +471,29 @@ void Gomoku::undo()
             ui->board->setHidden(true);
             emit messageSent("undo");
 
+            dialog = new WaitDialog(this);
+            connect(m_connection, &Connection::undoAllowed, dialog, &WaitDialog::onUndoAllowed);
+            connect(m_connection, &Connection::undoDisallowed, dialog, &WaitDialog::onUndoDisallowed);
+            connect(dialog, &WaitDialog::undoDisallowed, this, [this]()
+            {
+                m_timer.start(1000);;
+                ui->board->setHidden(false);
+            });
+            connect(dialog, &WaitDialog::undoAllowed, this, [&, this]()
+            {
+                ui->board->undo(undoStep);
+                ui->undo->setEnabled(ui->board->getMyPieces());
+
+                m_time_left = Const::TIME_LIMIT + 1;
+                if (m_is_blocked)
+                    m_opp_tot_time--;
+                else
+                    m_opp_tot_time--;
+                m_timer.start(1000);
+                ui->board->setHidden(false);
+                onTimeOut();
+            });
+            dialog->exec();
             break;
         default:
             break;
