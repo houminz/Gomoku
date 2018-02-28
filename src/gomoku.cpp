@@ -2,6 +2,7 @@
 #include "ui_gomoku.h"
 #include "connectdialog.h"
 #include "choosecolordialog.h"
+#include "waitdialog.h"
 
 #include <QtDebug>
 #include <QTime>
@@ -452,17 +453,23 @@ void Gomoku::pause()
 
 void Gomoku::undo()
 {
-    if (QMessageBox::question(this, tr("Undo Step"), tr("Do you want to undo 1 step")) == QMessageBox::Yes)
+    int undoStep = 1;
+    if (QMessageBox::question(this, tr("Undo Step"), tr("Do you want to undo?")) == QMessageBox::Yes)
     {
         switch (m_mode)
         {
         case Gomoku::AI:
         case Gomoku::Single:
-            ui->board->undo(1);
+            undoStep = 1;
+            ui->board->undo(undoStep);
             ui->board->revertColor();
             break;
         case Gomoku::Network:
-            ui->board->undo(1);
+            undoStep = m_is_blocked ? 1 : 2;
+            m_timer.stop();
+            ui->board->setHidden(true);
+            emit messageSent("undo");
+
             break;
         default:
             break;
