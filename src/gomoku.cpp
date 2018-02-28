@@ -612,7 +612,7 @@ void Gomoku::about()
     msgBox.setWindowTitle(tr("About Gomoku"));
     msgBox.setIconPixmap(QPixmap(":/icons/gomoku.ico"));
     msgBox.setText(QString(tr(
-                      "<h2>Gomoku Cosmos 0.01<br/></h2>"
+                      "<h2>Gomoku Cosmos 1.00<br/></h2>"
                       "<p>PKU Embeded System Project</p>"
                       "<p>Based on Qt 5.10.0<br/></p>"
                       "<p>Version: %1</p>"
