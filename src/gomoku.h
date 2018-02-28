@@ -83,7 +83,7 @@ private:
     // network about
     QString m_username;
     QString m_opp_username;
-    Const::HostType m_type;
+    Const::HostType m_type, m_current_player;
     QString m_ip;
     int m_port;
     bool m_is_connected;
@@ -96,6 +96,7 @@ private:
     void initialize();
     void createServerConnection(ConnectionThread *thread);
     void createClientConnection();
+    void nextMove();
 };
 
 #endif

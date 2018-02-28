@@ -42,7 +42,6 @@ Gomoku::Gomoku(QMainWindow *parent) :
 
     connect(ui->mode, SIGNAL(currentIndexChanged(int)), this, SLOT(setMode(int)));
 
-
     connect(ui->board, &Board::piecePlaced, this, &Gomoku::onMyMove);
     connect(ui->board, &Board::gameOver, this, &Gomoku::onGameOver);
 
@@ -58,13 +57,15 @@ Gomoku::~Gomoku()
 
 void Gomoku::closeEvent(QCloseEvent* event)
 {
-    qDebug() << "receive close event";
     emit disconnected();
     qApp->exit(0);
 }
 
 void Gomoku::setBlock(bool isBlock)
 {
+    m_current_player = m_type;
+    if (isBlock)
+        m_current_player = m_type == Const::Server ? Const::Client : Const::Server;
     m_is_blocked = isBlock;
     ui->board->setBlock(isBlock);
     ui->hint->setEnabled(!isBlock);
@@ -82,8 +83,8 @@ void Gomoku::initialize()
 
     ui->lcd_left0->display("00");
     ui->lcd_left1->display("00");
-    ui->lcd_total0->display("00:00");
-    ui->lcd_total1->display("00:00");
+    ui->lcd_used0->display("00:00");
+    ui->lcd_used1->display("00:00");
 }
 
 void Gomoku::setMode(int mode)
@@ -261,13 +262,24 @@ void Gomoku::onDisConnected()
 void Gomoku::onTimeOut()
 {
     m_time_left--;
+    int x, y;
+    if (m_is_blocked)
+    {
+        x = ++m_opp_tot_time;
+        y = m_my_tot_time;
+    }
+    else
+    {
+        x = ++m_my_tot_time;
+        y = m_opp_tot_time;
+    }
     QString time = QString::number(m_time_left);
     if (m_time_left < 10) time = "0" + time;
-    if (ui->board->getColor() == Piece::Black)
+    if (m_current_player == Const::Server)
     {
-        ui->lcd_total0->display(QTime(0, 0, 0).addSecs(++m_black_time).toString("mm:ss"));
+        ui->lcd_used0->display(QTime(0, 0, 0).addSecs(x).toString("mm:ss"));
         ui->lcd_left0->display(time);
-        ui->lcd_total1->display(QTime(0, 0, 0).addSecs(m_white_time).toString("mm:ss"));
+        ui->lcd_used1->display(QTime(0, 0, 0).addSecs(y).toString("mm:ss"));
         ui->lcd_left1->display(Const::TIME_LIMIT);
         ui->lcd_left1->setStyleSheet("");
         if (m_time_left <= 10)
@@ -277,10 +289,10 @@ void Gomoku::onTimeOut()
     }
     else
     {
-        ui->lcd_total0->display(QTime(0, 0, 0).addSecs(m_black_time).toString("mm:ss"));
+        ui->lcd_used0->display(QTime(0, 0, 0).addSecs(y).toString("mm:ss"));
         ui->lcd_left0->display(Const::TIME_LIMIT);
         ui->lcd_left0->setStyleSheet("");
-        ui->lcd_total1->display(QTime(0, 0, 0).addSecs(++m_white_time).toString("mm:ss"));
+        ui->lcd_used1->display(QTime(0, 0, 0).addSecs(x).toString("mm:ss"));
         ui->lcd_left1->display(time);
         if (m_time_left <= 10)
             ui->lcd_left1->setStyleSheet("color:red;");
@@ -291,7 +303,16 @@ void Gomoku::onTimeOut()
     if (!m_time_left)
     {
         m_can_undo = false;
+        nextMove();
     }
+}
+
+void Gomoku::nextMove()
+{
+    if (m_is_blocked)
+        onOpponentMove(-1, -1, Piece::Transparent);
+    else
+        onMyMove(-1, -1, Piece::Transparent);
 }
 
 void Gomoku::onChooseColor()
@@ -312,15 +333,19 @@ void Gomoku::onChooseColor()
             this->close();
     }
 
+    m_my_tot_time = m_opp_tot_time = 0;
+    m_time_left = Const::TIME_LIMIT + 1;
     if (dialog.firstPlayer() == m_type)
     {
         setBlock(false);
+        m_my_tot_time--;
         ui->board->setColor(Piece::Black);
         ui->label_info->setText(tr("Please select a position to place the pieces."));
     }
     else
     {
         setBlock(true);
+        m_opp_tot_time--;
         ui->board->setColor(Piece::White);
         ui->label_info->setText(tr("Waiting for the opponent to place..."));
     }
@@ -367,12 +392,15 @@ void Gomoku::onContinue()
 
 void Gomoku::onOpponentMove(int row, int col, Piece::PieceColor color)
 {
-    qDebug() << "receive opponent move";
     setBlock(false);
+    m_time_left = Const::TIME_LIMIT + 1;
+    m_my_tot_time--;
+    m_timer.start(1000);
+    onTimeOut();
 
     ui->label_info->setText(tr("Please select a position to place the pieces."));
     if (row < 0) m_can_undo = false;
-    ui->undo->setEnabled(m_can_undo);
+    ui->undo->setEnabled(ui->board->getMyPieces() && m_can_undo);
     ui->board->placePiece(row, col, (Piece::PieceColor)color);
 }
 
@@ -393,13 +421,11 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
         m_opp_tot_time--;
         m_timer.start(1000);
         onTimeOut();
-        qDebug() << "emit signal opponent move";
         emit moveSent(row, col, color);
         break;
     default:
         break;
     }
-
 }
 
 void Gomoku::onOpponentUndoRequest()
@@ -412,12 +438,21 @@ void Gomoku::onOpponentUndoRequest()
         emit messageSent("allowundo");
         ui->board->undo(undoStep);
         ui->undo->setEnabled(ui->board->getMyPieces());
-        //if (undoStep == 1)
-            //nextMove();
+        if (undoStep == 1)
+            nextMove();
+
+        m_time_left = Const::TIME_LIMIT + 1;
+        if (m_is_blocked)
+            m_opp_tot_time--;
+        else
+            m_opp_tot_time--;
+        m_timer.start(1000);
+        onTimeOut();
     }
     else
         emit messageSent("disallowundo");
     ui->board->setHidden(false);
+    m_timer.start(1000);
 }
 
 void Gomoku::onOpponentDrop()
@@ -498,14 +533,11 @@ void Gomoku::undo()
         default:
             break;
         }
-
-        qDebug() << "Send undo to opponent";
     }
 }
 
 void Gomoku::hint()
 {
-    qDebug() << "Show Hint";
     ui->board->showHint();
 }
 

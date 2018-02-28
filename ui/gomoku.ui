@@ -145,7 +145,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLCDNumber" name="lcd_total0">
+        <widget class="QLCDNumber" name="lcd_used0">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -330,7 +330,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLCDNumber" name="lcd_total1">
+        <widget class="QLCDNumber" name="lcd_used1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
            <horstretch>0</horstretch>
