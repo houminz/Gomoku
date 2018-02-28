@@ -88,6 +88,8 @@ void Gomoku::initialize()
 
 void Gomoku::setMode(int mode)
 {
+    onGameStartPrepare();
+
     if (QMessageBox::question(this, tr("Ret Mode"), tr("Do you really want to change the game mode?")) == QMessageBox::Yes)
     {
         ConnectDialog *dialog;
@@ -222,7 +224,6 @@ void Gomoku::onGameStartPrepare()
     default:
         break;
     }
-
 }
 
 void Gomoku::onGameOver(Piece::PieceColor color)
@@ -234,9 +235,9 @@ void Gomoku::onGameOver(Piece::PieceColor color)
         {
         case Gomoku::AI:
         case Gomoku::Network:
-            if (color == m_color)
+            if (color == ui->board->getColor())
                 QMessageBox::information(this, tr("WIN!"), tr("You win the game :-)"));
-            else if (color == Piece::Black)
+            else
                 QMessageBox::information(this, tr("LOSE"), tr("You lose the game :-("));
             break;
         case Gomoku::Single:
@@ -249,7 +250,7 @@ void Gomoku::onGameOver(Piece::PieceColor color)
             break;
         }
 
-    ui->board->setBlock(true);
+    onGameStartPrepare();
 }
 
 void Gomoku::onDisConnected()
@@ -424,9 +425,9 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
 {
     switch (m_mode) {
     case Gomoku::Single:
+        if (!m_is_started) return;
         ui->board->revertColor();
         m_time_left = Const::TIME_LIMIT + 1;
-        //m_opp_tot_time--;
         m_timer.start(1000);
         onTimeOut();
         break;
