@@ -18,8 +18,6 @@ Gomoku::Gomoku(QMainWindow *parent) :
     m_can_undo(false),
     m_my_tot_time(0),
     m_opp_tot_time(0),
-    m_black_time(0),
-    m_white_time(0),
     m_username("Black"),
     m_opp_username("White"),
     m_type(Const::Server),
@@ -48,6 +46,7 @@ Gomoku::Gomoku(QMainWindow *parent) :
     connect(&m_timer, &QTimer::timeout, this, &Gomoku::onTimeOut);
 
     initialize();
+    onGameStartPrepare();
 }
 
 Gomoku::~Gomoku()
@@ -202,13 +201,28 @@ void Gomoku::onGameStartPrepare()
     ui->undo->setEnabled(false);
     ui->drop->setEnabled(false);
 
-    if (m_type == Const::Server)
-    {
+    m_is_started = false;
+    m_is_blocked = false;
+    m_can_undo = false;
+    m_my_tot_time = 0;
+    m_opp_tot_time = 0;
+
+    switch (m_mode) {
+    case Gomoku::Single:
         ui->start->setEnabled(true);
-        ui->label_info->setText(tr("Press the start button to start a new game."));
+        break;
+    case Gomoku::Network:
+        if (m_type == Const::Server)
+        {
+            ui->start->setEnabled(true);
+            ui->label_info->setText(tr("Press the start button to start a new game."));
+        }
+        else if (m_type == Const::Client)
+            ui->label_info->setText(tr("Waiting for the server to start..."));
+    default:
+        break;
     }
-    else if (m_type == Const::Client)
-        ui->label_info->setText(tr("Waiting for the server to start..."));
+
 }
 
 void Gomoku::onGameOver(Piece::PieceColor color)
@@ -263,7 +277,8 @@ void Gomoku::onTimeOut()
 {
     m_time_left--;
     int x, y;
-    if (m_is_blocked)
+    if ((m_mode == Gomoku::Network && m_is_blocked) ||
+        (m_mode == Gomoku::Single && ui->board->getColor() == Piece::White))
     {
         x = ++m_opp_tot_time;
         y = m_my_tot_time;
@@ -275,7 +290,8 @@ void Gomoku::onTimeOut()
     }
     QString time = QString::number(m_time_left);
     if (m_time_left < 10) time = "0" + time;
-    if (m_current_player == Const::Server)
+    if ((m_mode == Gomoku::Network && m_current_player == Const::Server) ||
+        (m_mode == Gomoku::Single && ui->board->getColor() == Piece::Black))
     {
         ui->lcd_used0->display(QTime(0, 0, 0).addSecs(x).toString("mm:ss"));
         ui->lcd_left0->display(time);
@@ -410,6 +426,9 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
     case Gomoku::Single:
         ui->board->revertColor();
         m_time_left = Const::TIME_LIMIT + 1;
+        //m_opp_tot_time--;
+        m_timer.start(1000);
+        onTimeOut();
         break;
     case Gomoku::Network:
         m_can_undo = row > 0;
@@ -464,17 +483,45 @@ void Gomoku::onOpponentDrop()
 
 void Gomoku::start()
 {
-    qDebug() << "start now";
-    if (m_is_started)
-    {
-        emit messageSent("continue");
-        ui->start->setEnabled(false);
-        onContinue();
-    }
-    else if (m_type == Const::Server)
-    {
-        emit messageSent("start");
-        onChooseColor();
+    switch (m_mode) {
+    case Gomoku::Single:
+        if (m_is_started)
+        {
+            ui->start->setEnabled(false);
+            onContinue();
+        }
+        else
+        {
+            m_my_tot_time = m_opp_tot_time = 0;
+            m_time_left = Const::TIME_LIMIT + 1;
+            setBlock(false);
+            m_opp_tot_time--;
+            onTimeOut();
+            m_timer.start(1000);
+            ui->board->clear();
+            ui->board->setColor(Piece::Black);
+            ui->start->setText(tr("&Continue"));
+            ui->start->setEnabled(false);
+            ui->pause->setEnabled(true);
+            ui->drop->setEnabled(true);
+            ui->label_info->setText(tr("Please select a position to place the pieces."));
+            m_is_started = true;
+        }
+        break;
+    case Gomoku::Network:
+        if (m_is_started)
+        {
+            emit messageSent("continue");
+            ui->start->setEnabled(false);
+            onContinue();
+        }
+        else if (m_type == Const::Server)
+        {
+            emit messageSent("start");
+            onChooseColor();
+        }
+    default:
+        break;
     }
 }
 

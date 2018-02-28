@@ -77,8 +77,6 @@ private:
     int m_time_left;
     int m_my_tot_time;
     int m_opp_tot_time;
-    int m_black_time;
-    int m_white_time;
 
     // network about
     QString m_username;
