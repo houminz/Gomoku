@@ -13,4 +13,9 @@
         <file>images/righta.png</file>
         <file>images/whitep.png</file>
     </qresource>
+
+    <qresource prefix="/">
+        <file>trans/zh_CN.ts</file>
+        <file>trans/zh_CN.qm</file>
+    </qresource>
 </RCC>

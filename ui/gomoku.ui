@@ -127,7 +127,7 @@
        </size>
       </property>
       <property name="title">
-       <string>Player0</string>
+       <string>Player1</string>
       </property>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
@@ -305,7 +305,7 @@
        </size>
       </property>
       <property name="title">
-       <string>Player1</string>
+       <string>Player2</string>
       </property>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
