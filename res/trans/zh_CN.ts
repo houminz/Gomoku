@@ -490,8 +490,8 @@ The game will restart.</source>
     </message>
     <message>
         <location filename="../../src/gomoku.cpp" line="614"/>
-        <source>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;Based on Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;Built time: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright Â© 2018 Houmin Wei, Peking University. All Right Reserved.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Project Index: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;基于 Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;构建时间: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright Â© 2018 北京大学 魏后民. 保留所有权利.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;项目主页: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt; {2&gt;?} {1.00&lt;?} {2&gt;?} {5.10.0&lt;?} {1&lt;?} {2 ?} {3&lt;?} {2018 ?}</translation>
+        <source>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;Based on Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;Built time: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright © 2018 Houmin Wei, Peking University. All Right Reserved.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Project Index: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;基于 Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;构建时间: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright © 2018 北京大学 魏后民. 保留所有权利.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;项目主页: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
