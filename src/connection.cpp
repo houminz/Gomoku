@@ -1,6 +1,7 @@
 #include "connection.h"
 
 #include <QDataStream>
+#include <QtDebug>
 
 Connection::Connection(QObject *parent) :
     QTcpSocket(parent)
@@ -19,6 +20,7 @@ void Connection::greeting()
 
 void Connection::sendMove(int row, int col, Piece::PieceColor color)
 {
+    qDebug() << "send Move via connection";
     QByteArray array;
     QDataStream out(&array, QIODevice::WriteOnly);
     out << QString("MOVE");
@@ -66,6 +68,8 @@ void Connection::onReceivedData()
         }
         else if (type == "MOVE")
         {
+            qDebug() << "receive MOVE via connection";
+
             int row, col, color;
             in >> row >> col >> color;
             emit moveReceived(row, col, (Piece::PieceColor)color);

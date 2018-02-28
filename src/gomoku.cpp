@@ -366,6 +366,7 @@ void Gomoku::onContinue()
 
 void Gomoku::onOpponentMove(int row, int col, Piece::PieceColor color)
 {
+    qDebug() << "receive opponent move";
     setBlock(false);
 
     ui->label_info->setText(tr("Please select a position to place the pieces."));
@@ -382,11 +383,16 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
         m_time_left = Const::TIME_LIMIT + 1;
         break;
     case Gomoku::Network:
+        m_can_undo = row > 0;
+        ui->undo->setEnabled(ui->board->getMyPieces() && m_can_undo);
+        ui->label_info->setText(tr("Waiting for the opponent to place..."));
         setBlock(true);
+
         m_time_left = Const::TIME_LIMIT + 1;
         m_opp_tot_time--;
         m_timer.start(1000);
         onTimeOut();
+        qDebug() << "emit signal opponent move";
         emit moveSent(row, col, color);
         break;
     default:

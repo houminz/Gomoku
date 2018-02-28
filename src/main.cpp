@@ -8,6 +8,8 @@ int main(int argc, char **argv)
     QCoreApplication::setOrganizationName("Houmin");
     QCoreApplication::setApplicationName("Gomoku");
 
+    qRegisterMetaType<Piece::PieceColor>("Piece::PieceColor");
+
     Gomoku game;
     game.show();
 
