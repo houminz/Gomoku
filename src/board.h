@@ -17,6 +17,7 @@ public:
     ~Board();
 
     // getter member functions
+    int getMyPieces() const { return m_my_pieces; }
     Piece::PieceColor getColor() { return m_color; }
 
     // setter member functions
@@ -60,6 +61,7 @@ private:
     bool m_is_hidden;
     bool m_is_blocked;
     int m_round;
+    int m_my_pieces;
     double m_cell_width;
 
     // for undo

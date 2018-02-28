@@ -29,11 +29,6 @@ Gomoku::Gomoku(QMainWindow *parent) :
 {
     ui->setupUi(this);
 
-    ui->lcd_left0->display("00");
-    ui->lcd_left1->display("00");
-    ui->lcd_total0->display("00:00");
-    ui->lcd_total1->display("00:00");
-
     connect(ui->start, &QPushButton::clicked, this, &Gomoku::start);
     connect(ui->pause, &QPushButton::clicked, this, &Gomoku::pause);
     connect(ui->drop, &QPushButton::clicked, this, &Gomoku::drop);
@@ -83,6 +78,11 @@ void Gomoku::initialize()
     ui->drop->setEnabled(false);
     ui->start->setEnabled(false);
     ui->pause->setEnabled(false);
+
+    ui->lcd_left0->display("00");
+    ui->lcd_left1->display("00");
+    ui->lcd_total0->display("00:00");
+    ui->lcd_total1->display("00:00");
 }
 
 void Gomoku::setMode(int mode)
@@ -111,12 +111,18 @@ void Gomoku::setMode(int mode)
                 {
                     this->setWindowTitle(tr("Gomoku - Server"));
                     ui->label_info->setText(tr("Network Mode: Waiting for connection..."));
+                    ui->player1->setEnabled(false);
+                    ui->player0->setTitle(m_username);
+                    ui->player1->setTitle(tr("Player2"));
                     m_server = new Server(m_ip, m_port, this);
                     connect(m_server, &Server::newConnection, this, &Gomoku::createServerConnection);
                 }
                 else if (m_type == Const::Client)
                 {
                     this->setWindowTitle(tr("Gomoku - Client"));
+                    ui->player0->setEnabled(false);
+                    ui->player0->setTitle(tr("Player1"));
+                    ui->player1->setTitle(m_username);
                     createClientConnection();
                 }
                 break;
@@ -132,17 +138,16 @@ void Gomoku::setMode(int mode)
 
 void Gomoku::createServerConnection(ConnectionThread* thread)
 {
-    qDebug() << "receive connection";
     if (m_is_connected) return;
     m_is_connected = true;
     m_thread = thread;
+    m_thread->setGreetingMessage(m_username);
     connect(m_thread, &ConnectionThread::connectionReady, this, &Gomoku::onConnectionReady);
     m_thread->start();
 }
 
 void Gomoku::createClientConnection()
 {
-    qDebug() << "create client connection";
     m_thread = new ConnectionThread(m_type, m_ip, m_port, this);
     m_thread->setGreetingMessage(m_username);
     connect(m_thread, &ConnectionThread::connectionReady, this, &Gomoku::onConnectionReady);
@@ -162,7 +167,7 @@ void Gomoku::onConnectionReady(const QString& oppUsername)
     connect(m_connection, &Connection::continueReceived, this, &Gomoku::onContinue);
 
     connect(m_connection, &Connection::moveReceived, this, &Gomoku::onOpponentMove);
-    connect(m_connection, &Connection::opponentUndoRequest, this, &Gomoku::onOpponentUndoRequeset);
+    connect(m_connection, &Connection::opponentUndoRequest, this, &Gomoku::onOpponentUndoRequest);
     connect(m_connection, &Connection::opponentDropReceived, this, &Gomoku::onOpponentDrop);
     connect(m_connection, &Connection::disconnected, this, &Gomoku::onDisConnected);
 
@@ -173,6 +178,7 @@ void Gomoku::onConnectionReady(const QString& oppUsername)
     if (m_type == Const::Server)
     {
         ui->player1->setTitle(oppUsername);
+        ui->ip0->setText(QString("%1:%2").arg(Const::getLocalIP()).arg(m_connection->localPort()));
         ui->ip1->setText(QString("%1:%2").arg(m_connection->peerAddress().toString()).arg(m_connection->peerPort()));
     }
     else if (m_type == Const::Client)
@@ -182,6 +188,25 @@ void Gomoku::onConnectionReady(const QString& oppUsername)
         ui->ip1->setText(QString("%1:%2").arg(Const::getLocalIP()).arg(m_connection->localPort()));
     }
     onGameStartPrepare();
+}
+
+void Gomoku::onGameStartPrepare()
+{
+    m_timer.stop();
+    this->setBlock(true);
+    m_is_started = false;
+    ui->start->setText(tr("&Start"));
+    ui->pause->setEnabled(false);
+    ui->undo->setEnabled(false);
+    ui->drop->setEnabled(false);
+
+    if (m_type == Const::Server)
+    {
+        ui->start->setEnabled(true);
+        ui->label_info->setText(tr("Press the start button to start a new game."));
+    }
+    else if (m_type == Const::Client)
+        ui->label_info->setText(tr("Waiting for the server to start..."));
 }
 
 void Gomoku::onGameOver(Piece::PieceColor color)
@@ -211,7 +236,6 @@ void Gomoku::onGameOver(Piece::PieceColor color)
     ui->board->setBlock(true);
 }
 
-
 void Gomoku::onDisConnected()
 {
     m_is_connected = false;
@@ -231,26 +255,6 @@ void Gomoku::onDisConnected()
     else if (m_type == Const::Client)
         qApp->exit(233);
 
-}
-
-void Gomoku::onGameStartPrepare()
-{
-    m_timer.stop();
-    //if (m_is_choosing_color) return;
-    this->setBlock(true);
-    m_is_started = false;
-    ui->start->setText(tr("&Start"));
-    ui->pause->setEnabled(false);
-    ui->undo->setEnabled(false);
-    ui->drop->setEnabled(false);
-
-    if (m_type == Const::Server)
-    {
-        ui->start->setEnabled(true);
-        ui->label_info->setText(tr("Press the start button to start a new game."));
-    }
-    else if (m_type == Const::Client)
-        ui->label_info->setText(tr("Waiting for the server to start..."));
 }
 
 void Gomoku::onTimeOut()
@@ -297,7 +301,7 @@ void Gomoku::onChooseColor()
     ChooseColorDialog dialog(m_username, m_type, this);
     connect(m_connection, &Connection::prepareStateReceived, &dialog, &ChooseColorDialog::onUpdateState);
     connect(m_connection, &QTcpSocket::disconnected, &dialog, &ChooseColorDialog::onDisconnected);
-    connect(&dialog, &ChooseColorDialog::prepareStateChanged, m_connection, &Connection::sendMessage);
+    connect(&dialog, &ChooseColorDialog::prepareStateChanged, m_connection, &Connection::sendPrepareState);
 
     if (dialog.exec() != QDialog::Accepted)
     {
@@ -307,13 +311,25 @@ void Gomoku::onChooseColor()
             this->close();
     }
 
+    if (dialog.firstPlayer() == m_type)
+    {
+        setBlock(false);
+        ui->board->setColor(Piece::Black);
+        ui->label_info->setText(tr("Please select a position to place the pieces."));
+    }
+    else
+    {
+        setBlock(true);
+        ui->board->setColor(Piece::White);
+        ui->label_info->setText(tr("Waiting for the opponent to place..."));
+    }
     onTimeOut();
     m_timer.start(1000);
 
-    ui->start->SetText(tr("&Continue"));
-    ui->start->SetEnabled(false);
-    ui->pause->SetEnabled(true);
-    ui->drop->SetEnabled(true);
+    ui->start->setText(tr("&Continue"));
+    ui->start->setEnabled(false);
+    ui->pause->setEnabled(true);
+    ui->drop->setEnabled(true);
     m_is_started = true;
 }
 
@@ -341,7 +357,7 @@ void Gomoku::onContinue()
     ui->pause->setEnabled(true);
 
     ui->hint->setEnabled(!m_is_blocked);
-    ui->undo->setEnabled(m_can_undo);
+    ui->undo->setEnabled(ui->board->getMyPieces() && m_can_undo);
     ui->drop->setEnabled(true);
 
     ui->board->setBlock(m_is_blocked);
@@ -360,8 +376,22 @@ void Gomoku::onOpponentMove(int row, int col, Piece::PieceColor color)
 
 void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
 {
-    ui->board->revertColor();
-    m_time_left = Const::TIME_LIMIT + 1;
+    switch (m_mode) {
+    case Gomoku::Single:
+        ui->board->revertColor();
+        m_time_left = Const::TIME_LIMIT + 1;
+        break;
+    case Gomoku::Network:
+        setBlock(true);
+        m_time_left = Const::TIME_LIMIT + 1;
+        m_opp_tot_time--;
+        m_timer.start(1000);
+        onTimeOut();
+        emit moveSent(row, col, color);
+        break;
+    default:
+        break;
+    }
 
 }
 
@@ -374,9 +404,9 @@ void Gomoku::onOpponentUndoRequest()
     {
         emit messageSent("allowundo");
         ui->board->undo(undoStep);
-        //ui->undo->setEnabled();
-        if (undoStep == 1)
-            nextMove();
+        ui->undo->setEnabled(ui->board->getMyPieces());
+        //if (undoStep == 1)
+            //nextMove();
     }
     else
         emit messageSent("disallowundo");
@@ -393,8 +423,6 @@ void Gomoku::onOpponentDrop()
 void Gomoku::start()
 {
     qDebug() << "start now";
-//    m_time_left = Const::TIME_LIMIT + 1;
-//    m_timer.start(1000);
     if (m_is_started)
     {
         emit messageSent("continue");

@@ -9,7 +9,8 @@ Board::Board(QWidget *parent) :
     m_color(Piece::White),
     m_is_hidden(false),
     m_is_blocked(false),
-    m_round(0)
+    m_round(0),
+    m_my_pieces(0)
 {
     this->setMouseTracking(true);
     for (int i = 0; i <= Const::SIZE; i++)
@@ -141,6 +142,7 @@ void Board::mousePressEvent(QMouseEvent* event)
                 if (Const::Sqr(center.x() - event->x()) + Const::Sqr(center.y() - event->y()) >= r * r) continue;
                 if (event->button() == Qt::LeftButton)
                 {
+                    m_my_pieces++;
                     placePiece(i, j, m_color);
                     emit piecePlaced(i, j, m_color);
                     return;
@@ -151,6 +153,7 @@ void Board::mousePressEvent(QMouseEvent* event)
 void Board::clear()
 {
     m_round = 0;
+    m_my_pieces = 0;
     for (int i = 0 ; i <= Const::SIZE; i++)
         for (int j = 0 ; j <= Const::SIZE; j++) m_board[i][j] = Piece();
     this->update();
@@ -189,6 +192,8 @@ void Board::undo(int round)
         m_board[piece.getRow()][piece.getCol()].setColor(Piece::Transparent);
         m_stack.pop();
         m_round--;
+        if (piece.getColor() == m_color)
+            m_my_pieces--;
     }
     this->update();
 }

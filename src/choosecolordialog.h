@@ -44,7 +44,7 @@ private slots:
     void onStart();
 
 signals:
-    void prepareStateChanged(bool isAccepted, int state0, int state1, const QString& oppUsername);
+    void prepareStateChanged(bool isAccepted, int state0, int state1, const QString& username);
 
 };
 
