@@ -5,16 +5,6 @@
     </qresource>
 
     <qresource prefix="/">
-        <file>images/blackp.png</file>
-        <file>images/bomb.png</file>
-        <file>images/city.jpg</file>
-        <file>images/gomokub.png</file>
-        <file>images/lefta.png</file>
-        <file>images/righta.png</file>
-        <file>images/whitep.png</file>
-    </qresource>
-
-    <qresource prefix="/">
         <file>trans/zh_CN.ts</file>
         <file>trans/zh_CN.qm</file>
     </qresource>
