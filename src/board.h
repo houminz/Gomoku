@@ -31,6 +31,11 @@ public:
     void revertColor();
     void showHint();
 
+    // evaluate function for AI
+    QVector<Piece> getCandidate();
+    int evaluate(Piece::PieceColor color);
+    int getPattern(Piece::PieceColor, int srcX, int srcY, int deltaX, int deltaY);
+    int calScore(unsigned short pat[]);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -53,7 +58,6 @@ private:
         return isOnBoard(x, y) && m_board[x][y].getColor() == Piece::Transparent;
     }
     bool hasBomb(int x, int y);
-
 
     Piece m_board[Const::SIZE + 1][Const::SIZE + 1];
     QPointF m_center;

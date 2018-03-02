@@ -264,5 +264,121 @@ void Board::showHint()
         for (int j = 0; j <= Const::SIZE; j++)
             m_bomb[i][j] = hasBomb(i, j);
     this->update();
+}
+
+QVector<Piece> Board::getCandidate()
+{
+    int dr[] = { 1, 1, 0,-1,-1,-1, 0, 1}; //从正上方开始顺时针
+    int dc[] = { 0, 1, 1, 1, 0,-1,-1,-1};
+
+    QVector<Piece> candi;
+    bool check[Const::SIZE+1][Const::SIZE+1] = { false };
+    for (int i = 0; i <= Const::SIZE; i++)
+    {
+        for (int j = 0; j <= Const::SIZE; j++)
+        {
+            if (m_board[i][j].getCol() == Piece::Transparent)
+                continue;
+            for (int dep = 1; dep <= 2; dep++)
+            {
+                for (int k = 0; k < 8; ++k)
+                {
+                    int tr = i + dr[k] * dep;
+                    int tc = j + dc[k] * dep;
+
+                    if (isAvailable(tr, tc) && !check[tr][tc])
+                    {
+                        check[tr][tc] = true;
+                        candi.push_back(m_board[tr][tc]);
+                    }
+                }
+            }
+        }
+    }
+    return candi;
+}
+
+/*
+ */
+int Board::evaluate(Piece::PieceColor color)
+{
+    static const int dir[4][2] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
+                                //  --      |       \        /
+    int score = 0;
+
+    for (int i = 0; i <= Const::SIZE; i++)
+    {
+        for (int j = 0; j < Const::SIZE; j++)
+        {
+            if (m_board[i][j].getColor() != color)
+                continue;
+            for (int k = 0; k < 4; k++)
+            {
+                int curPat = getPattern(color, i, j, dir[k][0], dir[k][1]);
+                if (curPat > 0)
+                {
+                    ++pattern[curPat];
+                }
+                else if (curPat < 0)
+                {
+                    curPat = -curPat;
+                    int nr = i + dir[k][0] * (curPat - 1);
+                    int nc = j + dir[k][1] * (curPat - 1);
+                    while (m_board[nr][nc].getColor() != color) {
+                        nr -= dir[k][0];
+                        nc -= dir[k][1];
+                    }
+                    curPat = getPattern(color, nr, nc, -dir[k][0], -dir[k][1]);
+                    if (curPat > 0)
+                        ++pattern[curPat];
+                }
+            }
+        }
+    }
+    score = calScore(pattern);
+    return score;
+}
+
+int Board::getPattern(Piece::PieceColor color, int srcX, int srcY, int deltaX, int deltaY)
+{
+    int tr = srcX - deltaX;
+    int tc = srcY - deltaY;
+
+    bool live = true;
+    if (!isOnBoard(tr, tc))
+    {
+        live = false;
+    }
+    else
+    {
+        if (m_board[tr][tc].getColor() == color)
+            return 0;
+        live = (m_board[tr][tc].getColor() == Piece::Transparent) ? true : false;
+    }
+
+    unsigned short curPat = 1;
+    for (int i = 1; i < 5; i++)
+    {
+        curPat <<= 1;
+        tr = srcX + deltaX * i;
+        tc = srcY + deltaY * i;
+        if (!isOnBoard(tr, tc))
+            return -i;
+        else if (m_board[tr][tc].getColor() == Piece::Transparent)
+            curPat |= 0;
+        else if (m_board[tr][tc].getColor() == color)
+            curPat |= 1;
+        else
+            return -i;
+    }
+    curPat |= (live ? 0 : 1) << 5;
+    return curPat;
+}
+
+/*
+ *
+ */
+int Board::calScore(unsigned short pat[])
+{
 
 }

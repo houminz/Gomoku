@@ -32,7 +32,8 @@ HEADERS += src/gomoku.h \
     src/connectionthread.h \
     src/connectdialog.h \
     src/choosecolordialog.h \
-    src/waitdialog.h
+    src/waitdialog.h \
+    src/evaluate.h
 FORMS += ui/gomoku.ui \
     ui/connectdialog.ui \
     ui/waitdialog.ui \
@@ -45,5 +46,6 @@ SOURCES += src/gomoku.cpp src/main.cpp \
     src/connectionthread.cpp \
     src/connectdialog.cpp \
     src/choosecolordialog.cpp \
-    src/waitdialog.cpp
+    src/waitdialog.cpp \
+    src/evaluate.cpp
 RESOURCES += res/res.qrc

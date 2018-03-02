@@ -443,6 +443,15 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
         onTimeOut();
         emit moveSent(row, col, color);
         break;
+    case Gomoku::AI:
+        if (!m_is_started) return;
+        ui->board->revertColor();
+        ui->board->placePiece(row+1, col+1, ui->board->getColor());
+        ui->board->revertColor();
+        m_time_left = Const::TIME_LIMIT + 1;
+        m_timer.start(1000);
+        onTimeOut();
+        break;
     default:
         break;
     }
@@ -521,6 +530,30 @@ void Gomoku::start()
             emit messageSent("start");
             onChooseColor();
         }
+    case Gomoku::AI:
+        if (m_is_started)
+        {
+            ui->start->setEnabled(false);
+            onContinue();
+        }
+        else
+        {
+            m_my_tot_time = m_opp_tot_time = 0;
+            m_time_left = Const::TIME_LIMIT + 1;
+            setBlock(false);
+            m_opp_tot_time--;
+            onTimeOut();
+            m_timer.start(1000);
+            ui->board->clear();
+            ui->board->setColor(Piece::Black);
+            ui->start->setText(tr("&Continue"));
+            ui->start->setEnabled(false);
+            ui->pause->setEnabled(true);
+            ui->drop->setEnabled(true);
+            ui->label_info->setText(tr("Please select a position to place the pieces."));
+            m_is_started = true;
+        }
+        break;
     default:
         break;
     }
