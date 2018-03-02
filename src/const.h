@@ -33,22 +33,24 @@ enum Pattern
     ANALYSED
 };
 
-const int FIVE_SCORE                    = 100000;
-const int FOUR_SCORE                    = 10000;
-const int DOUBLE_SLEEP_FOUR_SCORE       = 10000;
-const int SLEEP_FOUR_AND_THREE_SCORE    = 10000;
-const int DOUBLE_THREE_SCORE            = 5000;
-const int SLEEP_THREE_AND_THREE_SCORE   = 1000;
-const int SLEEP_FOUR_SCORE              = 500;
-const int THREE_SCORE                   = 200;
-const int DOUBLE_TWO_SCORE              = 100;
-const int SLEEP_THREE_SCORE             = 50;
-const int TWO_AND_SLEEP_TWO_SCORE       = 10;
-const int TWO_SCORE                     = 5;
-const int SLEEP_TWO_SCORE               = 3;
-const int DEAD_FOUR_SCORE               = -5;
-const int DEAD_THREE_SCORE              = -5;
-const int DEAD_TWO_SCORE                = -5;
+namespace Score {
+const int FIVE                    = 100000;
+const int FOUR                    = 10000;
+const int DOUBLE_SLEEP_FOUR       = 10000;
+const int SLEEP_FOUR_AND_THREE    = 10000;
+const int DOUBLE_THREE            = 5000;
+const int SLEEP_THREE_AND_THREE   = 1000;
+const int SLEEP_FOUR              = 500;
+const int THREE                   = 200;
+const int DOUBLE_TWO              = 100;
+const int SLEEP_THREE             = 50;
+const int SLEEP_TWO_AND_TWO       = 10;
+const int TWO                     = 5;
+const int SLEEP_TWO               = 3;
+const int DEAD_FOUR               = -5;
+const int DEAD_THREE              = -5;
+const int DEAD_TWO                = -5;
+}
 
 const QColor PIECE_COLOR[3] =
 {

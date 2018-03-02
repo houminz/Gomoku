@@ -305,6 +305,7 @@ int Board::evaluate(Piece::PieceColor color)
     static const int dir[4][2] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
                                 //  --      |       \        /
     int score = 0;
+    unsigned short pattern[70] = { 0 };
 
     for (int i = 0; i <= Const::SIZE; i++)
     {
@@ -376,9 +377,73 @@ int Board::getPattern(Piece::PieceColor color, int srcX, int srcY, int deltaX, i
 }
 
 /*
+ * Calculate score based on the pattern of current board.
+ * the pattern is an unsigned short, only 6 bits are valid.
+ * the most significant bit stands for liveness, 1 for dead, 0 for live.
+ * for other bits, 1 for piece, 0 for no piece.
  *
+ * Pattern are list below:
+ *  0 11111(31)         =>  FIVE
+ *  1 11111(63)         =>  FIVE
+ *  0 11110(30)         =>  FOUR
+ *  1 11110(62) * 2     =>  DOUBLE_SLEEP_FOUR
+ *  1 11110 & 0 11100   =>  SLEEP_FOUR & THREE
+ *  0 11100(28)         =>  DOUBLE_THREE
+ *  1 11100 & 0 11100   =>  SLEEP_THREE & THREE
+ *  1 11110(62)         =>  SLEEP_FOUR
+ *  0 11100(28)         =>  THREE
+ *  0 11000(24) * 2     =>  DOUBLE_TWO
+ *  1 11100(60)         =>  SLEEP_THREE
+ *  0 11000 & 1 11000   =>  SLEEP_TWO & TWO
+ *  0 11000(24)         =>  TWO
+ *  1 11000(56)         =>  SLEEP_TWO
  */
 int Board::calScore(unsigned short pat[])
 {
+    struct SNode {
+        int score;
+        int req[2][2];
+        SNode() : score(0) { req[0][0] = req[1][0]=-1; }
+        SNode(int sc, int pat1, int cnt1, int pat2=-1, int cnt2=-1) {
+            score = sc;
+            req[0][0] = pat1;
+            req[0][1] = cnt1;
+            req[1][0] = pat2;
+            req[1][1] = cnt2;
+        }
+    };
 
+    SNode scale[] = {   // 分值表
+        SNode(Const::Score::FIVE,                   63, 1),
+        SNode(Const::Score::FIVE,                   31, 1),
+        SNode(Const::Score::FOUR,                   30, 1),
+        SNode(Const::Score::DOUBLE_SLEEP_FOUR,      62, 2),
+        SNode(Const::Score::SLEEP_FOUR_AND_THREE,   62, 1, 28, 1),
+        SNode(Const::Score::DOUBLE_THREE,           28, 2),
+        SNode(Const::Score::SLEEP_THREE_AND_THREE,  60, 1, 28, 1),
+        SNode(Const::Score::SLEEP_FOUR,             62, 1),
+        SNode(Const::Score::THREE,                  28, 1),
+        SNode(Const::Score::DOUBLE_TWO,             24, 2),
+        SNode(Const::Score::SLEEP_THREE,            60, 1),
+        SNode(Const::Score::TWO,                    24, 1),
+        SNode(Const::Score::SLEEP_TWO,              56, 1)
+    };
+
+    bool flag = true;
+    for (int i = 0; i < sizeof(scale)/sizeof(scale[0]); i++)
+    {
+        SNode cur = scale[i];
+
+        flag = true;
+        for (int j = 0; j < 2; ++j)
+        {
+            if (cur.req[j][0] == -1)
+                continue;
+            if (pat[cur.req[j][0]] <  cur.req[j][1])
+                flag = false;
+        }
+        if (flag)
+            return cur.score;
+    }
+    return 0;
 }
