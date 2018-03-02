@@ -32,10 +32,12 @@ public:
     void showHint();
 
     // evaluate function for AI
+    bool hasNeighbor(int x, int y, int delta, int count);
     QVector<Piece> getCandidate();
     int evaluate(Piece::PieceColor color);
     int getPattern(Piece::PieceColor, int srcX, int srcY, int deltaX, int deltaY);
     int calScore(unsigned short pat[]);
+    void ai(Piece::PieceColor color);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

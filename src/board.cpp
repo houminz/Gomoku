@@ -266,31 +266,42 @@ void Board::showHint()
     this->update();
 }
 
+bool Board::hasNeighbor(int x, int y, int delta, int count)
+{
+    int startX = x - delta;
+    int startY = y - delta;
+    int endX = x + delta;
+    int endY = y + delta;
+    for (int i = startX; i <= endX; i++)
+    {
+        for (int j = startY; j <= endY; j++)
+        {
+            if (!isOnBoard(i, j) || (i == x && j == y))
+                continue;
+            if (m_board[i][j].getColor() != Piece::Transparent)
+            {
+                count--;
+                if (count <= 0)
+                    return true;
+            }
+
+        }
+    }
+    return false;
+}
 QVector<Piece> Board::getCandidate()
 {
-    int dr[] = { 1, 1, 0,-1,-1,-1, 0, 1}; //从正上方开始顺时针
-    int dc[] = { 0, 1, 1, 1, 0,-1,-1,-1};
-
     QVector<Piece> candi;
-    bool check[Const::SIZE+1][Const::SIZE+1] = { false };
     for (int i = 0; i <= Const::SIZE; i++)
     {
         for (int j = 0; j <= Const::SIZE; j++)
         {
-            if (m_board[i][j].getCol() == Piece::Transparent)
-                continue;
-            for (int dep = 1; dep <= 2; dep++)
+            if (m_board[i][j].getColor() == Piece::Transparent)
             {
-                for (int k = 0; k < 8; ++k)
+                if (hasNeighbor(i, j, 1, 1))
                 {
-                    int tr = i + dr[k] * dep;
-                    int tc = j + dc[k] * dep;
-
-                    if (isAvailable(tr, tc) && !check[tr][tc])
-                    {
-                        check[tr][tc] = true;
-                        candi.push_back(m_board[tr][tc]);
-                    }
+                    candi.push_back(Piece(i,j));
+                    qDebug() << "candidates point: (" << i << "," << j << ")";
                 }
             }
         }
@@ -446,4 +457,29 @@ int Board::calScore(unsigned short pat[])
             return cur.score;
     }
     return 0;
+}
+
+void Board::ai(Piece::PieceColor color)
+{
+    int best =0;
+    int score = 0;
+    Piece bestMove;
+    QVector<Piece> candidates = getCandidate();
+    qDebug() << "getCandidates" << candidates.size();
+
+    foreach (Piece candidate, candidates) {
+        int x = candidate.getRow();
+        int y = candidate.getCol();
+        m_board[x][y].setColor(color);
+        score = Const::nodeValue[x][y] + evaluate(color);
+        m_board[x][y].setColor(Piece::Transparent);
+        qDebug() << "reset Move score is :" << score;
+
+        if (best < score)
+        {
+            best = score;
+            bestMove = candidate;
+        }
+    }
+    placePiece(bestMove.getRow(), bestMove.getCol(), color);
 }

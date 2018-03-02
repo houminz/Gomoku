@@ -28,6 +28,9 @@ Gomoku::Gomoku(QMainWindow *parent) :
 {
     ui->setupUi(this);
 
+    ui->player0->setTitle(tr("Black"));
+    ui->player1->setTitle(tr("White"));
+
     connect(ui->start, &QPushButton::clicked, this, &Gomoku::start);
     connect(ui->pause, &QPushButton::clicked, this, &Gomoku::pause);
     connect(ui->drop, &QPushButton::clicked, this, &Gomoku::drop);
@@ -97,6 +100,8 @@ void Gomoku::setMode(int mode)
         {
             case 0:
                 m_mode = Gomoku::Single;
+                ui->player0->setTitle(tr("Black"));
+                ui->player1->setTitle(tr("White"));
                 break;
             case 1:
                 m_mode = Gomoku::Network;
@@ -131,6 +136,8 @@ void Gomoku::setMode(int mode)
                 break;
             case 2:
                 m_mode = Gomoku::AI;
+                ui->player0->setTitle(tr("You"));
+                ui->player1->setTitle(tr("AI"));
                 break;
             default:
                 break;
@@ -210,6 +217,7 @@ void Gomoku::onGameStartPrepare()
     m_opp_tot_time = 0;
 
     switch (m_mode) {
+    case Gomoku::AI:
     case Gomoku::Single:
         ui->start->setEnabled(true);
         break;
@@ -234,6 +242,11 @@ void Gomoku::onGameOver(Piece::PieceColor color)
         switch (m_mode)
         {
         case Gomoku::AI:
+            if (color == Piece::Black)
+                QMessageBox::information(this, tr("WIN!"), tr("You win the game :-)"));
+            else
+                QMessageBox::information(this, tr("LOSE"), tr("You lose the game :-("));
+            break;
         case Gomoku::Network:
             if (color == ui->board->getColor())
                 QMessageBox::information(this, tr("WIN!"), tr("You win the game :-)"));
@@ -279,7 +292,8 @@ void Gomoku::onTimeOut()
     m_time_left--;
     int x, y;
     if ((m_mode == Gomoku::Network && m_is_blocked) ||
-        (m_mode == Gomoku::Single && ui->board->getColor() == Piece::White))
+        (m_mode == Gomoku::Single && ui->board->getColor() == Piece::White) ||
+        (m_mode == Gomoku::AI && ui->board->getColor() == Piece::White))
     {
         x = ++m_opp_tot_time;
         y = m_my_tot_time;
@@ -292,7 +306,8 @@ void Gomoku::onTimeOut()
     QString time = QString::number(m_time_left);
     if (m_time_left < 10) time = "0" + time;
     if ((m_mode == Gomoku::Network && m_current_player == Const::Server) ||
-        (m_mode == Gomoku::Single && ui->board->getColor() == Piece::Black))
+        (m_mode == Gomoku::Single && ui->board->getColor() == Piece::Black) ||
+        (m_mode == Gomoku::AI && ui->board->getColor() == Piece::Black))
     {
         ui->lcd_used0->display(QTime(0, 0, 0).addSecs(x).toString("mm:ss"));
         ui->lcd_left0->display(time);
@@ -446,7 +461,7 @@ void Gomoku::onMyMove(int row, int col, Piece::PieceColor color)
     case Gomoku::AI:
         if (!m_is_started) return;
         ui->board->revertColor();
-        ui->board->placePiece(row+1, col+1, ui->board->getColor());
+        ui->board->ai(ui->board->getColor());
         ui->board->revertColor();
         m_time_left = Const::TIME_LIMIT + 1;
         m_timer.start(1000);

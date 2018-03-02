@@ -98,15 +98,70 @@ static int[][] position = {
 
 ## 搜索算法
 
+计算机要选择有利于它的最佳下法，就要能够判断那种形式对自己最有利。为了判断哪种形式更有利，往往需要向后面计算几步，看看走了几步棋之后，局面的形式如何。五子棋的各种走法展开后，就形成了一棵巨大的博弈树。
+
 ### 极大极小搜索
 
-分析：要想得更远的，棋子落在哪里最好？
+在这个树中，从根节点为0开始，奇数层表示电脑可能的走法，偶数层表示玩家可能的走法。
 
-1. 在对弈中，可利用棋局估值函数对任何一个局面进行估值，估值越大表明对当前玩家越有利，估分越小则表明越不利；
-2.  选择落子时，要考虑对自己第一步越有利的，对对手下一步越不利的，对自己第二步越有利的，以此类推；
-3. 这样选择落子时就表现为一棵极大极小搜索树，逐层搜索，对自己轮的层就选最大值的局面，对对手轮就选最小值的局面，直到一定深度。
+假设电脑先手，那么第一层就是电脑的所有可能的走法，第二层就是玩家的所有可能走法，以此类推。
 
- 但测试后发现该算法速度比较慢，对15×15的棋盘，搜索第一层有15×15=225个结点，第二层就约有15×15×15×15=50625个节点，完全是指数爆炸。
+那么我们如何才能知道哪一个分支的走法是最优的，我们就需要一个**估值函数**能对当前整个局势作出评估，返回一个分数。我们规定对电脑越有利，分数越大，对玩家越有利，分数越小，分数的起点是0。
+
+我们遍历这颗博弈树的时候就很明显知道该如何选择分支了：
+
+- 电脑走棋的层我们称为MAX层，这一层电脑要保证自己利益最大化，那么就需要选分最高的节点。
+
+- 玩家走棋的层我们称为MIN层，这一层玩家要保证自己的利益最大化，那么就会选分最低的节点。
+
+
+![minmax](/home/houmin/Qt/Gomoku/img/minmax.png)
+
+这也就是极大极小值搜索算法的名称由来。如上图，图中甲是电脑，乙是玩家，那么在甲层的时候，总是选其中值最大的节点，乙层的时候，总是选其中最小的节点。
+
+而每一个节点的分数，都是由子节点决定的，因此我们对博弈树只能进行深度优先搜索而无法进行广度优先搜索。深度优先搜索用递归非常容易实现，然后主要工作其实是完成一个估值函数，这个函数需要对当前局势给出一个比较准确的评分。
+
+实现极大值极小值搜索，就是是一个DFS，伪代码如下：
+
+```pascal
+function minmax(board, depth)
+	for move in board.getLegalMoves() do
+        board.createMove( move );
+        current = min( board );
+        if current.getScore() > bestScoreSoFar then
+        	bestScoreSoFar = current.getScore();
+        	bestMove = current.getMove();
+        board.resetMove( move );
+   	return bestScoreSoFar;
+
+function min( board, depth )
+	if board.isTerminal() then
+		return evaluate(board)
+	else
+		score = ∞
+		for move in board.getLegalMoves() do
+			board.createMove( move );
+			result = max( board, depth-1 )
+			board.resetMove( move );
+			if (result < score)
+            	score = result;
+	return score;
+
+function max( board, depth )
+	if board.isTerminal() then
+		return evaluate(board)
+	else
+		score = -∞
+		for move in board.getLegalMoves() do
+			board.createMove( move );
+			result = min( board, depth-1 )
+			board.resetMove( move );
+			if (result > score)
+            	score = result;
+	return score;
+```
+
+但测试后发现该算法速度比较慢，对15×15的棋盘，搜索第一层有15×15=225个结点，第二层就约有15×15×15×15=50625个节点，完全是指数爆炸。
 
 ### α-β剪枝算法
 
@@ -127,4 +182,4 @@ make
 
 ## 怎么用AI
 
-1. 每次Human下子之后，改变了board的状态，然后AI根据当前的状态，遍历所有的可以下子的点，假设在对应的位置落子，查看棋盘中的模式，对应算出该点的分数，哪个分数大下到哪。
+1. 每次Human下子之后，改变了board的状态，然后AI根据当前的状态，找到所有的可以下子的点（邻居），假设在对应的位置落子，查看棋盘中的模式，对应算出该点的分数，哪个分数大MAX下到哪（evaluate）。然后在

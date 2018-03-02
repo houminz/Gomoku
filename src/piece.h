@@ -18,6 +18,7 @@ public:
     };
 
     explicit Piece();
+    explicit Piece(int row, int col);
     explicit Piece(int row, int col, PieceColor color, int round);
     ~Piece();
 

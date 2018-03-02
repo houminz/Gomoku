@@ -196,8 +196,8 @@ Please check the network connection.</source>
     </message>
     <message>
         <location filename="../../ui/gomoku.ui" line="101"/>
-        <location filename="../../src/gomoku.cpp" line="260"/>
-        <location filename="../../src/gomoku.cpp" line="269"/>
+        <location filename="../../src/gomoku.cpp" line="270"/>
+        <location filename="../../src/gomoku.cpp" line="279"/>
         <source>Disconnected</source>
         <translation>已断开连接</translation>
     </message>
@@ -236,7 +236,7 @@ Please check the network connection.</source>
     </message>
     <message>
         <location filename="../../ui/gomoku.ui" line="243"/>
-        <location filename="../../src/gomoku.cpp" line="201"/>
+        <location filename="../../src/gomoku.cpp" line="205"/>
         <source>&amp;Start</source>
         <translation>开始</translation>
     </message>
@@ -262,7 +262,7 @@ Please check the network connection.</source>
     </message>
     <message>
         <location filename="../../ui/gomoku.ui" line="130"/>
-        <location filename="../../src/gomoku.cpp" line="127"/>
+        <location filename="../../src/gomoku.cpp" line="129"/>
         <source>Player1</source>
         <translation>玩家1</translation>
     </message>
@@ -307,191 +307,217 @@ Please check the network connection.</source>
         <translation>你真的想改变游戏模式吗？</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="115"/>
+        <location filename="../../src/gomoku.cpp" line="100"/>
+        <source>Black</source>
+        <translation>黑方</translation>
+    </message>
+    <message>
+        <location filename="../../src/gomoku.cpp" line="101"/>
+        <source>White</source>
+        <translation>白方</translation>
+    </message>
+    <message>
+        <location filename="../../src/gomoku.cpp" line="117"/>
         <source>Gomoku - Server</source>
         <translation>Gomoku - 服务器</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="116"/>
+        <location filename="../../src/gomoku.cpp" line="118"/>
         <source>Network Mode: Waiting for connection...</source>
         <translation>网络对战模式：等待连接 ...</translation>
     </message>
     <message>
         <location filename="../../ui/gomoku.ui" line="308"/>
-        <location filename="../../src/gomoku.cpp" line="119"/>
+        <location filename="../../src/gomoku.cpp" line="121"/>
         <source>Player2</source>
         <translation>玩家2</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="125"/>
+        <location filename="../../src/gomoku.cpp" line="127"/>
         <source>Gomoku - Client</source>
         <translation>Gomoku - 客户端</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="177"/>
+        <location filename="../../src/gomoku.cpp" line="136"/>
+        <source>You</source>
+        <translation>你</translation>
+    </message>
+    <message>
+        <location filename="../../src/gomoku.cpp" line="137"/>
+        <source>AI</source>
+        <translation>计算机AI</translation>
+    </message>
+    <message>
+        <location filename="../../src/gomoku.cpp" line="181"/>
         <source>Connected</source>
         <translation>已连接</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="220"/>
+        <location filename="../../src/gomoku.cpp" line="225"/>
         <source>Press the start button to start a new game.</source>
         <translation>请点击开始来重新游戏</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="223"/>
+        <location filename="../../src/gomoku.cpp" line="228"/>
         <source>Waiting for the server to start...</source>
         <translation>等待服务器开始 ...</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="232"/>
+        <location filename="../../src/gomoku.cpp" line="237"/>
         <source>DRAW</source>
         <translation>平局</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="232"/>
+        <location filename="../../src/gomoku.cpp" line="237"/>
         <source>2333333333...</source>
         <translation>233333333...</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="239"/>
-        <location filename="../../src/gomoku.cpp" line="245"/>
+        <location filename="../../src/gomoku.cpp" line="243"/>
+        <location filename="../../src/gomoku.cpp" line="249"/>
+        <location filename="../../src/gomoku.cpp" line="255"/>
         <source>WIN!</source>
         <translation>胜利！</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="239"/>
+        <location filename="../../src/gomoku.cpp" line="243"/>
+        <location filename="../../src/gomoku.cpp" line="249"/>
         <source>You win the game :-)</source>
         <translation>你赢得了游戏 :-)</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="241"/>
-        <location filename="../../src/gomoku.cpp" line="247"/>
-        <location filename="../../src/gomoku.cpp" line="598"/>
+        <location filename="../../src/gomoku.cpp" line="245"/>
+        <location filename="../../src/gomoku.cpp" line="251"/>
+        <location filename="../../src/gomoku.cpp" line="257"/>
+        <location filename="../../src/gomoku.cpp" line="644"/>
         <source>LOSE</source>
         <translation>失败</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="241"/>
+        <location filename="../../src/gomoku.cpp" line="245"/>
+        <location filename="../../src/gomoku.cpp" line="251"/>
         <source>You lose the game :-(</source>
         <translation>你输了 :-(</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="245"/>
+        <location filename="../../src/gomoku.cpp" line="255"/>
         <source>White win the game :-)</source>
         <translation>白方赢得了游戏 :-)</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="247"/>
+        <location filename="../../src/gomoku.cpp" line="257"/>
         <source>Black win the game :-)</source>
         <translation>黑方赢得了游戏 :-)</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="266"/>
+        <location filename="../../src/gomoku.cpp" line="276"/>
         <source>Connection has been disconnected!</source>
         <translation>连接已经中断！</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="268"/>
+        <location filename="../../src/gomoku.cpp" line="278"/>
         <source>
 The game will restart.</source>
         <translation>
 游戏将会重新启动。</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="338"/>
+        <location filename="../../src/gomoku.cpp" line="350"/>
         <source>Waiting for choosing color...</source>
         <translation>等待选择颜色...</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="360"/>
-        <location filename="../../src/gomoku.cpp" line="397"/>
-        <location filename="../../src/gomoku.cpp" line="418"/>
-        <location filename="../../src/gomoku.cpp" line="508"/>
+        <location filename="../../src/gomoku.cpp" line="372"/>
+        <location filename="../../src/gomoku.cpp" line="409"/>
+        <location filename="../../src/gomoku.cpp" line="430"/>
+        <location filename="../../src/gomoku.cpp" line="529"/>
+        <location filename="../../src/gomoku.cpp" line="566"/>
         <source>Please select a position to place the pieces.</source>
         <translation>请选择一处落子。</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="367"/>
-        <location filename="../../src/gomoku.cpp" line="399"/>
-        <location filename="../../src/gomoku.cpp" line="437"/>
+        <location filename="../../src/gomoku.cpp" line="379"/>
+        <location filename="../../src/gomoku.cpp" line="411"/>
+        <location filename="../../src/gomoku.cpp" line="449"/>
         <source>Waiting for the opponent to place...</source>
         <translation>等待对方落子...</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="372"/>
-        <location filename="../../src/gomoku.cpp" line="504"/>
+        <location filename="../../src/gomoku.cpp" line="384"/>
+        <location filename="../../src/gomoku.cpp" line="525"/>
+        <location filename="../../src/gomoku.cpp" line="562"/>
         <source>&amp;Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="382"/>
+        <location filename="../../src/gomoku.cpp" line="394"/>
         <source>Pausing...</source>
         <translation>暂停...</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="456"/>
+        <location filename="../../src/gomoku.cpp" line="477"/>
         <source>Undo Request</source>
         <translation>悔棋请求</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="456"/>
+        <location filename="../../src/gomoku.cpp" line="477"/>
         <source>Do you allow the opponent to move back before %1 step%2</source>
         <translation>你同意对方回退 %1 步吗？</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="481"/>
+        <location filename="../../src/gomoku.cpp" line="502"/>
         <source>WIN</source>
         <translation>胜利</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="481"/>
+        <location filename="../../src/gomoku.cpp" line="502"/>
         <source>The opponent drop the game :)</source>
         <translation>对方认输了 :-(</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="541"/>
+        <location filename="../../src/gomoku.cpp" line="587"/>
         <source>Undo Step</source>
         <translation>悔棋步数</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="541"/>
+        <location filename="../../src/gomoku.cpp" line="587"/>
         <source>Do you want to undo?</source>
         <translation>你确定要悔棋吗？</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="594"/>
+        <location filename="../../src/gomoku.cpp" line="640"/>
         <source>Drop Game</source>
         <translation>认输</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="594"/>
+        <location filename="../../src/gomoku.cpp" line="640"/>
         <source>Do you really want to drop the game?</source>
         <translation>你真的要认输吗？</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="598"/>
+        <location filename="../../src/gomoku.cpp" line="644"/>
         <source>You drop the game :(</source>
         <translation>你认输了 :-(</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="605"/>
+        <location filename="../../src/gomoku.cpp" line="651"/>
         <source>Disconnect</source>
         <translation>断开连接</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="605"/>
+        <location filename="../../src/gomoku.cpp" line="651"/>
         <source>Do you really want to disconnect?</source>
         <translation>你真的要断开连接吗？</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="612"/>
+        <location filename="../../src/gomoku.cpp" line="658"/>
         <source>About Gomoku</source>
         <translation>关于 Gomoku</translation>
     </message>
     <message>
-        <location filename="../../src/gomoku.cpp" line="614"/>
-        <source>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;Based on Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;Built time: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright © 2018 Houmin Wei, Peking University. All Right Reserved.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Project Index: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;Based on Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;Built time: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright © 2018 北京大学 魏后民。 All Right Reserved.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Project Index: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</translation>
+        <location filename="../../src/gomoku.cpp" line="660"/>
+        <source>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;Based on Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;Built time: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright Â© 2018 Houmin Wei, Peking University. All Right Reserved.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Project Index: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;h2&gt;Gomoku Cosmos 1.00&lt;br/&gt;&lt;/h2&gt;&lt;p&gt;PKU Embeded System Project&lt;/p&gt;&lt;p&gt;Based on Qt 5.10.0&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Version: %1&lt;/p&gt;&lt;p&gt;Built time: %2 - %3&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Copyright Â© 2018 Houmin Wei, Peking University. All Right Reserved.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Project Index: &lt;a href=&quot;https://github.com/SimpCosm/Gomoku&quot;&gt;https://github.com/SimpCosm/Gomoku&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
