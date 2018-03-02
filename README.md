@@ -115,7 +115,7 @@ static int[][] position = {
 - 玩家走棋的层我们称为MIN层，这一层玩家要保证自己的利益最大化，那么就会选分最低的节点。
 
 
-![minmax](/home/houmin/Qt/Gomoku/img/minmax.png)
+![minmax](img/minmax.png)
 
 这也就是极大极小值搜索算法的名称由来。如上图，图中甲是电脑，乙是玩家，那么在甲层的时候，总是选其中值最大的节点，乙层的时候，总是选其中最小的节点。
 

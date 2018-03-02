@@ -462,7 +462,7 @@ int Board::calScore(unsigned short pat[])
 void Board::ai(Piece::PieceColor color)
 {
     int best =0;
-    int score = 0;
+    int score = INT_MIN;
     Piece bestMove;
     QVector<Piece> candidates = getCandidate();
     qDebug() << "getCandidates" << candidates.size();
@@ -471,9 +471,11 @@ void Board::ai(Piece::PieceColor color)
         int x = candidate.getRow();
         int y = candidate.getCol();
         m_board[x][y].setColor(color);
-        score = Const::nodeValue[x][y] + evaluate(color);
+        int aiScore = evaluate(color);
+        int manScore = evaluate(color == Piece::White ? Piece::Black : Piece::White);
+        score = aiScore - manScore + Const::nodeValue[x][y];
         m_board[x][y].setColor(Piece::Transparent);
-        qDebug() << "reset Move score is :" << score;
+        qDebug() << "reset Move score is :" << score << " hunman score: " << manScore << " AI score" << aiScore;
 
         if (best < score)
         {
