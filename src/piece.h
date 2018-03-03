@@ -32,6 +32,7 @@ public:
     // Setter member functions
     void setColor(PieceColor color) { m_color = color; }
     void setState(PieceState state) { m_state = state; }
+    void setPostion(int x, int y) { m_row = x; m_col = y; }
 
 private:
     int m_row;

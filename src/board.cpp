@@ -301,7 +301,6 @@ QVector<Piece> Board::getCandidate()
                 if (hasNeighbor(i, j, 1, 1))
                 {
                     candi.push_back(Piece(i,j));
-                    qDebug() << "candidates point: (" << i << "," << j << ")";
                 }
             }
         }
@@ -349,6 +348,14 @@ int Board::evaluate(Piece::PieceColor color)
     }
     score = calScore(pattern);
     return score;
+}
+
+int Board::getScore(Piece::PieceColor color)
+{
+    int aiScore = evaluate(Piece::White);
+    int manScore = evaluate(Piece::Black);
+    int result = (color == Piece::White ? 1 : -1) * (aiScore - manScore);
+    return result;
 }
 
 int Board::getPattern(Piece::PieceColor color, int srcX, int srcY, int deltaX, int deltaY)
@@ -461,27 +468,76 @@ int Board::calScore(unsigned short pat[])
 
 void Board::ai(Piece::PieceColor color)
 {
-    int best =0;
-    int score = INT_MIN;
+    Piece bestMove = chooseMove(color, 4);
+
+    placePiece(bestMove.getRow(), bestMove.getCol(), color);
+}
+
+Piece Board::chooseMove(Piece::PieceColor color, int depth)
+{
     Piece bestMove;
+    int bestScore = INT_MIN;
     QVector<Piece> candidates = getCandidate();
-    qDebug() << "getCandidates" << candidates.size();
 
     foreach (Piece candidate, candidates) {
         int x = candidate.getRow();
         int y = candidate.getCol();
         m_board[x][y].setColor(color);
-        int aiScore = evaluate(color);
-        int manScore = evaluate(color == Piece::White ? Piece::Black : Piece::White);
-        score = aiScore - manScore + Const::nodeValue[x][y];
-        m_board[x][y].setColor(Piece::Transparent);
-        qDebug() << "reset Move score is :" << score << " hunman score: " << manScore << " AI score" << aiScore;
-
-        if (best < score)
+        int score = Board::getMinValue(color, depth-1);
+        if (score > bestScore || checkWin(x, y, color))
         {
-            best = score;
-            bestMove = candidate;
+            bestMove.setPostion(x, y);
+            bestScore = score;
         }
+        m_board[x][y].setColor(Piece::Transparent);
     }
-    placePiece(bestMove.getRow(), bestMove.getCol(), color);
+
+    return bestMove;
+}
+
+int Board::getMinValue(Piece::PieceColor color, int depth)
+{
+    int score = getScore(color);
+    if (depth <= 0)
+        return score;
+
+    int bestScore = INT_MAX;
+    QVector<Piece> candidates = getCandidate();
+
+    foreach (Piece candidate, candidates) {
+        int x = candidate.getRow();
+        int y = candidate.getCol();
+        m_board[x][y].setColor(color == Piece::White ? Piece::Black : Piece::White);
+        score = Board::getMaxValue(color == Piece::White ? Piece::Black : Piece::White, depth-1);
+        if (score < bestScore)
+        {
+            bestScore = score;
+        }
+        m_board[x][y].setColor(Piece::Transparent);
+    }
+
+    return bestScore;
+}
+
+int Board::getMaxValue(Piece::PieceColor color, int depth)
+{
+    int score = getScore(color);
+    if (depth <= 0)
+        return score;
+
+    int bestScore = INT_MIN;
+    QVector<Piece> candidates = getCandidate();
+
+    foreach (Piece candidate, candidates) {
+        int x = candidate.getRow();
+        int y = candidate.getCol();
+        m_board[x][y].setColor(color == Piece::White ? Piece::Black : Piece::White);
+        score = Board::getMinValue(color == Piece::White ? Piece::Black : Piece::White, depth-1);
+        if (score > bestScore)
+        {
+            bestScore = score;
+        }
+        m_board[x][y].setColor(Piece::Transparent);
+    }
+    return bestScore;
 }

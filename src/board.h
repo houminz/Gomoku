@@ -35,9 +35,13 @@ public:
     bool hasNeighbor(int x, int y, int delta, int count);
     QVector<Piece> getCandidate();
     int evaluate(Piece::PieceColor color);
+    int getScore(Piece::PieceColor color);
     int getPattern(Piece::PieceColor, int srcX, int srcY, int deltaX, int deltaY);
     int calScore(unsigned short pat[]);
     void ai(Piece::PieceColor color);
+    Piece chooseMove(Piece::PieceColor color, int depth);
+    int getMinValue(Piece::PieceColor color, int depth);
+    int getMaxValue(Piece::PieceColor color, int depth);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
